@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VisionGuide — Voir autrement, avancer en confiance</title>
+<meta name="description" content="Site de suivi et guide d'utilisation du dispositif d'assistance pour malvoyants.">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="fiches-wow.css">
+<link rel="stylesheet" href="langue.css">
+<link rel="stylesheet" href="gps-wow.css">
+<link rel="stylesheet" href="contact-wow.css">
+<link rel="stylesheet" href="home-wow.css">
+<link rel="stylesheet" href="boutons-wow.css">
+<link rel="stylesheet" href="delais-wow.css">
+<link rel="stylesheet" href="champs-wow.css">
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<!-- ===================== CONNEXION ===================== -->
+<div id="login" class="login">
+  <form id="loginForm" class="login-card glass" autocomplete="off">
+    <div class="logo-orb"><span></span><span></span><span></span>👁</div>
+    <h1 class="grad">VisionGuide</h1>
+    <p class="muted">Accès sécurisé · Entrez les informations fournies par le constructeur</p>
+
+    <label>Code d'accès ou adresse IP du dispositif
+      <input id="fId" required placeholder="Ex : VG-2026-XXXXX ou 192.168.1.50">
+    </label>
+    <label>Nom du malvoyant
+      <input id="fBlind" required placeholder="Prénom du malvoyant">
+    </label>
+    <label>Nom de la personne qui suit
+      <input id="fFollower" required placeholder="Votre prénom">
+    </label>
+
+    <button class="btn" type="submit"><span>Se connecter</span><i class="shine"></i></button>
+    <p id="loginErr" class="err" role="alert"></p>
+  </form>
+</div>
+
+<!-- ===================== APPLICATION ===================== -->
+<div id="app" class="app hidden">
+  <header class="nav glass">
+    <a class="brand" href="#home"><span class="dot"></span>VisionGuide</a>
+    <nav id="tabs">
+      <a href="#home" data-tab="home">Home</a>
+      <a href="#guide" data-tab="guide">Guide</a>
+      <a href="#gps" data-tab="gps">GPS</a>
+      <a href="#contact" data-tab="contact">Contact</a>
+      <span class="ink"></span>
+    </nav>
+    <div class="who"><small id="whoTxt"></small><button id="logout" class="ghost">Déconnexion</button></div>
+  </header>
+
+  <main>
+    <!-- HOME : page d'accueil « cinéma » (styles : home-wow.css · logique : home-wow.js) -->
+    <section id="home" class="view">
+      <!-- 1 · Héros plein écran : la lentille éclaire la scène et verrouille les éléments -->
+      <div class="hv" id="hv">
+        <div class="hv-media" aria-hidden="true">
+          <img class="hv-dim" src="img/pano-gilet.jpg" alt="">
+          <img class="hv-lit" src="img/pano-gilet.jpg" alt="">
+          <div class="hv-boxes">
+            <div class="hv-box" data-b=".17,.01,.46,.98"><span>Utilisateur</span></div>
+            <div class="hv-box" data-b=".26,.38,.21,.48"><span>Gilet porté</span></div>
+            <div class="hv-box" data-b=".77,.0,.21,.42"><span>Gilet · produit</span></div>
+          </div>
+          <i class="hv-scan"></i><i class="hv-lines"></i><div class="hv-scrim"></div>
+          <div class="hv-lens"><svg viewBox="0 0 220 220"><circle class="a" cx="110" cy="110" r="106"/><circle class="b" cx="110" cy="110" r="88"/><path class="c" d="M110 6v26M110 188v26M6 110h26M188 110h26"/><circle cx="110" cy="110" r="3.5" fill="#c8ff3a"/></svg><em id="hvXY">X 0.00 · Y 0.00</em></div>
+          <div class="hv-tag l"><b></b>VisionGuide · scène 01</div>
+          <div class="hv-tag r" id="hvClock">--:--:--</div>
+        </div>
+
+        <div class="hv-in">
+          <p class="eyebrow hv-fade" style="--d:.2s">Technologie d'assistance · Autonomie · Sécurité</p>
+          <h2 class="hv-title">
+            <span class="l1"><span class="w" style="--i:0"><span>Voir</span></span> <span class="w" style="--i:1"><span>autrement,</span></span></span>
+            <span class="l2"><span class="w" style="--i:2"><span>avancer</span></span> <span class="w" style="--i:3"><span>en</span></span> <span class="w" style="--i:4"><span>confiance.</span></span></span>
+          </h2>
+          <p class="hv-lead hv-fade" style="--d:1.5s">Un dispositif intelligent qui accompagne chaque déplacement, et un suivi GPS en temps réel pour que les proches restent sereins.</p>
+          <div class="hv-cta hv-fade" style="--d:1.7s">
+            <a class="btn" href="#gps"><span>Ouvrir le suivi GPS</span><i class="shine"></i></a>
+            <a class="btn outline" href="#guide"><span>Lire le guide</span></a>
+          </div>
+        </div>
+        <div class="hv-cue" aria-hidden="true"><span>Explorez la scène du regard</span><i></i></div>
+      </div>
+
+      <!-- 2 · Trois chapitres -->
+      <div class="hc">
+        <article class="hc-row">
+          <div class="hc-vis cam">
+            <img src="img/pano-camera.jpg" alt="" loading="lazy">
+            <div class="hc-track"><span>Obstacle</span></div>
+            <i class="hc-beam"></i>
+          </div>
+          <div class="hc-txt reveal"><span class="hc-num">01</span><h3>Navigation assistée</h3><p>Le boîtier détecte les obstacles et guide l'utilisateur par signaux sonores ou vibrations.</p></div>
+        </article>
+
+        <article class="hc-row">
+          <div class="hc-vis map">
+            <svg viewBox="0 0 600 480" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <defs>
+                <linearGradient id="hmRoute" x1="0" x2="1"><stop offset="0" stop-color="#ffd166"/><stop offset="1" stop-color="#ff6a3d"/></linearGradient>
+                <pattern id="hmGrid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="rgba(255,255,255,.07)"/></pattern>
+              </defs>
+              <rect width="600" height="480" fill="#0a0c18"/><rect width="600" height="480" fill="url(#hmGrid)"/>
+              <g fill="rgba(255,255,255,.045)"><rect x="70" y="60" width="110" height="70" rx="6"/><rect x="300" y="40" width="90" height="100" rx="6"/><rect x="420" y="250" width="120" height="80" rx="6"/><rect x="60" y="250" width="90" height="90" rx="6"/><rect x="250" y="330" width="130" height="70" rx="6"/></g>
+              <path id="hmRoutePath" class="route" pathLength="1" d="M50 420 C 150 360, 120 230, 260 215 S 430 300, 480 160 S 560 90, 550 50"/>
+              <circle class="rdot" r="8" fill="#fff"><animateMotion dur="5s" begin="0s" repeatCount="indefinite"><mpath href="#hmRoutePath"/></animateMotion></circle>
+              <g transform="translate(550 50)"><circle class="rping" r="12"/><circle r="7" fill="#ffd166"/></g>
+              <g class="rtag" transform="translate(396 14)"><rect width="128" height="30" rx="15" fill="rgba(10,12,24,.9)" stroke="#ffd166"/><text x="64" y="20" text-anchor="middle" font-size="13" font-weight="600" fill="#ffd166" font-family="Outfit,sans-serif">Position reçue</text></g>
+            </svg>
+          </div>
+          <div class="hc-txt reveal"><span class="hc-num">02</span><h3>Suivi en temps réel</h3><p>La position du téléphone (application Traccar Client) arrive directement sur le site : suivez le trajet sur une carte comme dans Google Maps.</p></div>
+        </article>
+
+        <article class="hc-row">
+          <div class="hc-vis lock">
+            <svg viewBox="0 0 400 400" aria-hidden="true">
+              <circle class="o1" cx="200" cy="200" r="176"/><circle class="o2" cx="200" cy="200" r="140"/><circle class="o3" cx="200" cy="200" r="104"/>
+              <g class="shackle"><path d="M152 196V150a48 48 0 0 1 96 0v46" fill="none" stroke="#ffd166" stroke-width="16" stroke-linecap="round"/></g>
+              <rect x="120" y="190" width="160" height="122" rx="26" fill="#14172a" stroke="#ffd166" stroke-width="4"/>
+              <circle cx="200" cy="242" r="15" fill="#ffd166"/><rect x="194" y="246" width="12" height="36" rx="6" fill="#ffd166"/>
+            </svg>
+          </div>
+          <div class="hc-txt reveal"><span class="hc-num">03</span><h3>Accès protégé</h3><p>Seuls les codes délivrés par le constructeur ouvrent la porte du suivi.</p></div>
+        </article>
+      </div>
+
+      <!-- 3 · Le dispositif : ruban de photos -->
+      <div class="hr reveal">
+        <p class="eyebrow">Le dispositif · six éléments</p>
+        <div class="hr-track">
+          <a class="hr-i" href="#composant/gilet"><img src="img/pano-gilet.jpg" alt="" loading="lazy"><b>Gilet</b></a>
+          <a class="hr-i" href="#composant/raspberry-pi-5"><img src="img/pano-pi5.jpg" alt="" loading="lazy"><b>Raspberry Pi 5</b></a>
+          <a class="hr-i" href="#composant/camera-module-3"><img src="img/pano-camera.jpg" alt="" loading="lazy"><b>Caméra Module 3</b></a>
+          <a class="hr-i" href="#composant/power-bank"><img src="img/pano-powerbank.jpg" alt="" loading="lazy"><b>Power bank</b></a>
+          <a class="hr-i" href="#composant/casque-bluetooth"><img src="img/pano-casque.jpg" alt="" loading="lazy"><b>Casque Bluetooth</b></a>
+          <a class="hr-i" href="#composant/commande-connexion"><img src="img/pano-commande.jpg" alt="" loading="lazy"><b>Commande &amp; connexion</b></a>
+          <a class="hr-i" href="#composant/gilet" aria-hidden="true" tabindex="-1"><img src="img/pano-gilet.jpg" alt="" loading="lazy"><b>Gilet</b></a>
+          <a class="hr-i" href="#composant/raspberry-pi-5" aria-hidden="true" tabindex="-1"><img src="img/pano-pi5.jpg" alt="" loading="lazy"><b>Raspberry Pi 5</b></a>
+          <a class="hr-i" href="#composant/camera-module-3" aria-hidden="true" tabindex="-1"><img src="img/pano-camera.jpg" alt="" loading="lazy"><b>Caméra Module 3</b></a>
+          <a class="hr-i" href="#composant/power-bank" aria-hidden="true" tabindex="-1"><img src="img/pano-powerbank.jpg" alt="" loading="lazy"><b>Power bank</b></a>
+          <a class="hr-i" href="#composant/casque-bluetooth" aria-hidden="true" tabindex="-1"><img src="img/pano-casque.jpg" alt="" loading="lazy"><b>Casque Bluetooth</b></a>
+          <a class="hr-i" href="#composant/commande-connexion" aria-hidden="true" tabindex="-1"><img src="img/pano-commande.jpg" alt="" loading="lazy"><b>Commande &amp; connexion</b></a>
+        </div>
+      </div>
+
+      <!-- 4 · Chiffres -->
+      <div class="hs">
+        <div class="hs-i reveal"><b data-count="24">0</b><span>h d'autonomie visée</span></div>
+        <div class="hs-i reveal"><b data-count="5">0</b><span>s de latence GPS</span></div>
+        <div class="hs-i reveal"><b data-count="100">0</b><span>% accès sécurisé</span></div>
+        <div class="hs-i reveal"><b data-count="1">0</b><span>proche connecté en direct</span></div>
+      </div>
+
+      <!-- 5 · Final -->
+      <div class="hx" aria-hidden="true"><div class="hx-track"><span>Voir autrement</span><i>✦</i><span>Avancer en confiance</span><i>✦</i><span>Voir autrement</span><i>✦</i><span>Avancer en confiance</span><i>✦</i></div></div>
+      <div class="hx-cta reveal">
+        <a class="btn" href="#gps"><span>Ouvrir le suivi GPS</span><i class="shine"></i></a>
+        <a class="btn outline" href="#guide"><span>Lire le guide</span></a>
+      </div>
+    </section>
+
+    <!-- GUIDE -->
+    <section id="guide" class="view">
+      <h2 class="title reveal"><span class="grad">Guide d'utilisation</span></h2>
+      <p class="lead reveal">Tout ce qu'il faut savoir pour bien utiliser le dispositif, du déballage à l'entretien.</p>
+
+
+      <a class="guide-feature glass reveal" href="#composants" aria-label="01 Composants du dispositif : ouvrir">
+        <em>01</em>
+        <div class="gf-txt">
+          <h3>Composants du dispositif</h3>
+          <p>Découvrez, en images, les 6 éléments qui forment le système : gilet, Raspberry Pi 5, caméra, batterie, casque et commandes.</p>
+        </div>
+        <div class="gf-thumbs" aria-hidden="true">
+          <img src="img/gilet-produit.jpg" alt=""><img src="img/pi-carte.jpg" alt=""><img src="img/cam-objectif.jpg" alt=""><img src="img/pb-face.jpg" alt=""><img src="img/casque-coque.jpg" alt=""><img src="img/photo-bouton.jpg" alt="">
+        </div>
+        <span class="gf-go" aria-hidden="true">→</span>
+        <i class="sheen"></i>
+      </a>
+
+      <a class="guide-feature glass reveal" href="#utilisation" aria-label="02 Guide d'utilisation : ouvrir">
+        <em>02</em>
+        <div class="gf-txt">
+          <h3>Guide d'utilisation</h3>
+          <p>Huit étapes simples, de la mise sous tension au retour en navigation : alimentation, mise en marche, casque, initialisation, guidage, appel de l'assistant, question vocale et retour en navigation, avec tous les temps d'attente.</p>
+        </div>
+        <div class="gf-thumbs" aria-hidden="true">
+          <img src="img/pi-led.jpg" alt=""><img src="img/casque.jpg" alt=""><img src="img/photo-bouton.jpg" alt="">
+        </div>
+        <span class="gf-go" aria-hidden="true">→</span>
+        <i class="sheen"></i>
+      </a>
+
+      <h3 class="sub reveal">Questions fréquentes</h3>
+      <div class="faq">
+        <details class="glass reveal"><summary>La position ne s'affiche pas sur la carte</summary><p>Vérifiez dans Traccar Client que « Continuous tracking » est activé, que le téléphone a internet, que la localisation est autorisée en permanence et que l'économie de batterie n'est pas active pour l'application. Le statut passe en « En ligne » dès qu'une position est reçue ; à l'arrêt, le téléphone envoie moins souvent, c'est normal.</p></details>
+        <details class="glass reveal"><summary>Que faire en cas de perte de signal ?</summary><p>La dernière position connue reste affichée avec l'heure de réception. Dès que la connexion revient, le suivi reprend automatiquement.</p></details>
+        <details class="glass reveal"><summary>Entretien du dispositif</summary><p>Nettoyez les capteurs avec un chiffon doux et sec. Évitez l'immersion et les chocs violents.</p></details>
+        <details class="glass reveal"><summary>Consignes de sécurité</summary><p>Le dispositif est une aide complémentaire : il ne remplace pas la canne blanche ni le chien guide. Restez attentif à votre environnement.</p></details>
+      </div>
+    </section>
+
+    <!-- GUIDE › 01 COMPOSANTS DU DISPOSITIF (page panoramique) -->
+    <section id="composants" class="view">
+      <a class="back-link reveal" href="#guide">← Guide d'utilisation</a>
+      <div class="comp-head">
+        <p class="eyebrow reveal">Guide · 01</p>
+        <h2 class="title reveal"><span class="grad">Composants du dispositif</span></h2>
+        <p class="lead reveal">Six éléments, un seul système. Touchez un composant pour le découvrir en détail : photos, caractéristiques, rôle et conseils.</p>
+      </div>
+      <div id="panoList" class="pano-list"></div>
+    </section>
+
+    <!-- GUIDE › fiche détaillée d'un composant (remplie par composants.js) -->
+    <section id="composant" class="view"></section>
+
+    <!-- GUIDE › 02 GUIDE D'UTILISATION (parcours en 8 étapes) -->
+    <section id="utilisation" class="view">
+      <div class="use-progress" aria-hidden="true"><b></b></div>
+      <a class="back-link reveal" href="#guide">← Guide d'utilisation</a>
+      <div class="use-hero">
+        <div class="use-spark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="use-radar" aria-hidden="true"><i></i><i></i><i></i><b></b></div>
+        <p class="eyebrow reveal">Guide · 02</p>
+        <h2 class="title reveal"><span class="grad">Procédure d'utilisation du système</span></h2>
+        <p class="lead reveal">Huit étapes simples, de la mise sous tension au retour en navigation, avec les temps d'attente réels.</p>
+        <button type="button" class="lg-chip reveal" data-go="langue"><b aria-hidden="true">FR</b><span>Voix en français par défaut · comment changer de langue</span><em aria-hidden="true">↓</em></button>
+        <div class="use-eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <ol class="use-route">
+        <li class="use-step">
+          <span class="use-node" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg><em>1</em></span>
+          <div class="use-card glass" data-k="Étape 1" data-n="1"><h3>Alimentation du dispositif</h3><p>Branchez le câble du power bank au port d'alimentation de la carte Raspberry Pi, celui qui porte le symbole d'alimentation.</p></div>
+          <figure class="use-vis use-photo use-hp"><img src="img/pi-alim.jpg" alt="Raspberry Pi 5 dans son boîtier rouge : le port d'alimentation, à gauche, porte le symbole d'alimentation et est entouré d'un cercle animé" loading="lazy"><span class="target pw-target" data-label="Port d'alimentation"><i></i><i></i></span><span class="say s1" data-label="Branchez le power bank"></span></figure>
+        </li>
+        <li class="use-step">
+          <span class="use-node" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3.5"/><circle cx="12" cy="12" r="4.2"/></svg><em>2</em></span>
+          <div class="use-card glass" data-k="Étape 2" data-n="2"><h3>Mise en marche du système</h3><p>Appuyez sur le bouton poussoir de marche/arrêt, en haut à gauche du malvoyant, pour activer le système en entier.</p></div>
+          <figure class="use-vis use-photo use-hp"><img src="img/bouton-marche.jpg" alt="Bouton poussoir de marche/arrêt monté sur la plaque d'essai ; le bouton est entouré d'un cercle animé" loading="lazy"><b class="pb-cap"></b><span class="target pb-target" data-label="Bouton marche / arrêt"><i></i><i></i></span><span class="say s1" data-label="Appuyez sur marche / arrêt"></span><span class="say s2" data-label="Système activé"></span></figure>
+        </li>
+        <li class="use-step">
+          <span class="use-node" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="7" rx="2"/><rect x="17" y="14" width="4" height="7" rx="2"/></svg><em>3</em></span>
+          <div class="use-card glass" data-k="Étape 3" data-n="3"><h3>Connexion du casque</h3>
+            <ol class="use-sub">
+              <li>Appuyez sur le bouton d'alimentation du casque, celui qui porte le symbole d'allumage, jusqu'à entendre «&nbsp;Power on&nbsp;».</li>
+              <li>Patientez quelques secondes jusqu'à entendre «&nbsp;Connected&nbsp;».</li>
+              <li>Mettez votre casque et assurez-vous qu'il est correctement connecté au dispositif.</li>
+            </ol></div>
+          <figure class="use-vis use-photo use-hp"><img src="img/casque-bouton.jpg" alt="Casque Bluetooth : le bouton d'alimentation, avec le symbole d'allumage, est entouré d'un cercle animé" loading="lazy"><span class="target hp-target" data-label="Bouton d'alimentation"><i></i><i></i></span><span class="say s1" data-label="Power on"></span><span class="say s2" data-label="Connected"></span></figure>
+        </li>
+        <li class="use-step">
+          <span class="use-node" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12l6-5"/></svg><em>4</em></span>
+          <div class="use-card glass" data-k="Étape 4" data-n="4"><h3>Initialisation du système et détection</h3><p>Une fois le système activé, il lance automatiquement le processus de détection. Comptez environ <b>3 secondes</b> de chargement, jusqu'à la phrase «&nbsp;Système prêt. Mode navigation.&nbsp;». Le système garde ensuite <b>3 secondes de silence</b> avant d'activer les détections vocales : c'est à ce moment seulement que les consignes de guidage peuvent commencer.</p><div class="use-note" data-label="Remarque"><p>Il est préférable de rester immobile jusqu'à la fin de ces 3 secondes de silence : le système n'est réellement opérationnel qu'à ce moment-là.</p></div></div>
+          <div class="use-vis v-boot" aria-hidden="true">
+            <div class="bt-core">
+              <svg class="bt-rings" viewBox="0 0 160 160"><circle class="bgc" cx="80" cy="80" r="70"/><circle class="a1" cx="80" cy="80" r="70"/><circle class="bgc" cx="80" cy="80" r="52"/><circle class="a2" cx="80" cy="80" r="52"/></svg>
+              <div class="bt-radar"><b></b></div>
+              <div class="bt-waves"><i></i><i></i><i></i></div>
+              <div class="it bt-0"><svg viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg></div>
+              <div class="it bt-1"><b class="num"></b><small>secondes</small></div>
+              <div class="it bt-2"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg></div>
+              <div class="it bt-3"><b class="num"></b><small>silence</small></div>
+              <div class="it bt-4"><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></div>
+            </div>
+            <p class="bt-cap"><span class="c0">Appui sur marche / arrêt</span><span class="c1">Chargement de la navigation</span><span class="c2">« Système prêt. Mode navigation. »</span><span class="c3">Silence avant les détections</span><span class="c4">Navigation active</span></p>
+          </div>
+          <div class="pl-wrap"><p class="pl-cap"><i></i>Chronologie en temps réel · démarrage</p><ol class="pl" aria-hidden="true"><li class="pl-n" data-d="0.9"><span class="pl-ic"><svg viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg></span><h4>Appui</h4><b class="pl-chip">clic</b><p>Bouton marche / arrêt</p><i class="pl-bar"></i></li><li class="pl-n" data-d="3" data-cnt><span class="pl-ic"><svg viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7 3c0 5 5 6 5 9s-5 4-5 9M17 3c0 5-5 6-5 9s5 4 5 9"/></svg></span><h4>Chargement</h4><b class="pl-chip">≈ 3 s</b><p>La navigation démarre seule</p><i class="pl-bar"></i></li><li class="pl-n" data-d="2"><span class="pl-ic"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg></span><h4>Annonce</h4><b class="pl-chip">voix</b><p>« Système prêt. Mode navigation. »</p><i class="pl-bar"></i></li><li class="pl-n" data-d="3" data-cnt><span class="pl-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></span><h4>Silence</h4><b class="pl-chip">3 s</b><p>Avant les détections vocales</p><i class="pl-bar"></i></li><li class="pl-n" data-d="2"><span class="pl-ic"><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><h4>Navigation active</h4><b class="pl-chip">prête</b><p>Les consignes de guidage commencent</p><i class="pl-bar"></i></li></ol></div>
+        </li>
+        <li class="use-step">
+          <span class="use-node" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6"/></svg><em>5</em></span>
+          <div class="use-card glass" data-k="Étape 5" data-n="5"><h3>Déplacement et guidage</h3><p>Une fois le système opérationnel, vous pouvez commencer à vous déplacer en toute sécurité. Tout au long de votre parcours, le dispositif vous signale la présence d'éventuels obstacles et vous guide simultanément par des consignes vocales simples et claires.</p><ul class="use-rules"><li><b>1,5 s</b><span>Une consigne n'est dite que si elle reste identique pendant 1,5 s.</span></li><li><b>5 s</b><span>Deux annonces sont toujours séparées d'au moins 5 s.</span></li><li><b>4 s</b><span>Après 4 s sans obstacle, la scène est réinitialisée : une personne qui revient est annoncée de nouveau.</span></li><li><b>Jamais</b><span>Une même phrase n'est pas répétée tant que la scène ne change pas.</span></li></ul></div>
+          <div class="use-vis v-walk" aria-hidden="true"><svg viewBox="0 0 420 230"><path class="road" d="M20 190 C 120 190, 110 70, 215 96 S 340 170, 400 40"/><path class="road-dash" d="M20 190 C 120 190, 110 70, 215 96 S 340 170, 400 40"/><g class="obst"><circle cx="215" cy="96" r="9"/><circle class="o-ring" cx="215" cy="96" r="9"/><circle class="o-ring o2" cx="215" cy="96" r="9"/></g><circle class="dot" r="8"><animateMotion dur="7s" repeatCount="indefinite" path="M20 190 C 120 190, 110 70, 215 96 S 340 170, 400 40"/></circle></svg><span class="voice v1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg></span></div>
+        </li>
+        <li class="use-step">
+          <span class="use-node" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><em>6</em></span>
+          <div class="use-card glass" data-k="Étape 6" data-n="6"><h3>Description de l'environnement</h3><p>Si vous souhaitez obtenir une description détaillée de votre environnement, vérifiez d'abord que le système est en marche (le bouton en haut à gauche du malvoyant le met en marche ou l'arrête), puis appuyez <b>une seule fois</b> sur le bouton en haut à droite du malvoyant, prévu à cet effet, pour appeler le modèle d'intelligence artificielle. La navigation s'arrête alors complètement : les deux modes ne tournent jamais en même temps. L'assistant se charge ensuite et vous annonce qu'il est prêt.</p><div class="use-note" data-label="Temps d'attente"><p>Attendez «&nbsp;Assistant prêt. Appuyez sur le bouton question&nbsp;» avant de continuer. Les appuis faits pendant le changement de mode sont ignorés : inutile d'insister.</p></div></div>
+          <div class="use-vis v-btns" aria-hidden="true">
+            <div class="vb-board">
+              <svg class="vb-link" viewBox="0 0 100 106" preserveAspectRatio="none"><defs><linearGradient id="vbG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5fe0aa"/><stop offset=".5" stop-color="#9b7bff"/><stop offset="1" stop-color="#ff3d9a"/></linearGradient></defs>
+                <path class="vb-rail" d="M68 21 C 58 15, 42 15, 32 21" pathLength="100"/><path class="vb-flow" d="M68 21 C 58 15, 42 15, 32 21" pathLength="100"/>
+                <path class="vb-rail" d="M31 27 C 48 31, 60 42, 72 61" pathLength="100"/><path class="vb-flow vb-flow2" d="M31 27 C 48 31, 60 42, 72 61" pathLength="100"/></svg>
+              <div class="vb-it vb-pow">
+                <span class="vb-sw"><em class="off">ARRÊT</em><em class="on">MARCHE</em></span>
+                <span class="vb-btn"><i class="vb-boot"></i><i class="vb-ring"></i><i class="vb-ring"></i><b class="vb-n">1</b><svg viewBox="0 0 24 24"><path class="vb-pl" d="M12 3v8.5"/><path d="M6.6 6.8a8 8 0 1 0 10.8 0"/></svg></span>
+                <span class="vb-lab"><b>Marche / arrêt</b><small>haut gauche · d'abord</small></span>
+              </div>
+              <div class="vb-it vb-ai">
+                <span class="vb-btn"><span class="vb-orbit"><i></i><i></i><i></i></span><i class="vb-ring"></i><i class="vb-ring"></i><b class="vb-n">2</b><svg viewBox="0 0 24 24"><path class="vb-star" d="M12 2.5l2.3 6.4 6.4 2.3-6.4 2.3L12 20l-2.3-6.5-6.4-2.3 6.4-2.3z"/><path class="vb-star2" d="M19.5 3.5v4M17.5 5.5h4"/></svg></span>
+                <span class="vb-lab"><b>Appel de l'IA</b><small>haut droite · ensuite</small></span>
+              </div>
+              <div class="vb-it vb-rec">
+                <span class="vb-wave"><i style="--a:0deg"></i><i style="--a:15deg"></i><i style="--a:30deg"></i><i style="--a:45deg"></i><i style="--a:60deg"></i><i style="--a:75deg"></i><i style="--a:90deg"></i><i style="--a:105deg"></i><i style="--a:120deg"></i><i style="--a:135deg"></i><i style="--a:150deg"></i><i style="--a:165deg"></i><i style="--a:180deg"></i><i style="--a:195deg"></i><i style="--a:210deg"></i><i style="--a:225deg"></i><i style="--a:240deg"></i><i style="--a:255deg"></i><i style="--a:270deg"></i><i style="--a:285deg"></i><i style="--a:300deg"></i><i style="--a:315deg"></i><i style="--a:330deg"></i><i style="--a:345deg"></i></span>
+                <span class="vb-btn"><i class="vb-ring"></i><i class="vb-ring"></i><b class="vb-n">3</b><svg viewBox="0 0 24 24"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span>
+                <em class="vb-recdot"><u></u>REC</em>
+                <span class="vb-lab"><b>Enregistre la voix</b><small>bas gauche · à chaque clic</small></span>
+              </div>
+              <div class="vb-it vb-lang">
+                <span class="vb-codes"><em class="c1">FR</em><em class="c2">EN</em><em class="c3">AR</em></span>
+                <span class="vb-btn"><i class="vb-ring"></i><i class="vb-ring"></i><i class="vb-ring"></i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><ellipse class="vb-mer" cx="12" cy="12" rx="3.8" ry="9"/></svg></span>
+                <span class="vb-lab"><b>Langue</b><small>bas droite · à tout moment</small></span>
+              </div>
+              <p class="vb-side">Côtés vus du malvoyant</p>
+              <div class="vb-stat"><span class="s0">Le système est en marche</span><span class="s1">Le modèle d'IA est activé</span><span class="s2">Votre voix est enregistrée</span><span class="s4">L'IA analyse, puis répond à voix haute</span><span class="s3">La langue change à chaque appui</span></div>
+            </div>
+          </div>
+          <div class="pl-wrap"><p class="pl-cap"><i></i>Chronologie en temps réel · passage en mode assistant</p><ol class="pl" aria-hidden="true"><li class="pl-n" data-d="0.9"><span class="pl-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8.5"/></svg></span><h4>Appui</h4><b class="pl-chip">haut droite</b><p>Un seul appui sur le bouton IA</p><i class="pl-bar"></i></li><li class="pl-n" data-d="3" data-cnt><span class="pl-ic"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></span><h4>Arrêt navigation</h4><b class="pl-chip">≤ 3 s</b><p>La navigation s'arrête complètement</p><i class="pl-bar"></i></li><li class="pl-n" data-d="1" data-cnt><span class="pl-ic"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span><h4>Caméra</h4><b class="pl-chip">1 s</b><p>Libérée pour l'assistant</p><i class="pl-bar"></i></li><li class="pl-n" data-d="3"><span class="pl-ic"><svg viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7 3c0 5 5 6 5 9s-5 4-5 9M17 3c0 5-5 6-5 9s5 4 5 9"/></svg></span><h4>Chargement</h4><b class="pl-chip">variable</b><p>« Assistant en cours de chargement… »</p><i class="pl-bar"></i></li><li class="pl-n" data-d="3"><span class="pl-ic"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg></span><h4>Prêt</h4><b class="pl-chip">voix</b><p>« Assistant prêt. Appuyez sur le bouton question. »</p><i class="pl-bar"></i></li></ol></div>
+        </li>
+        <li class="use-step">
+          <span class="use-node" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg><em>7</em></span>
+          <div class="use-card glass" data-k="Étape 7" data-n="7"><h3>Poser une question à voix haute</h3><p>Quand l'assistant est prêt, appuyez sur le bouton en bas à gauche du malvoyant. Attendez la fin de «&nbsp;Je vous écoute&nbsp;», puis parlez : l'enregistrement dure <b>6 secondes</b>. L'assistant annonce «&nbsp;Analyse de l'image en cours&nbsp;», puis répond à voix haute.</p><div class="use-note" data-label="Temps d'attente"><p>À chaque nouvelle question, appuyez de nouveau sur ce bouton. Pendant l'analyse et la réponse, les appuis sont ignorés : attendez la fin de la réponse.</p></div></div>
+          <div class="use-vis v-mic" aria-hidden="true">
+            <div class="mc-core">
+              <svg class="mc-ring" viewBox="0 0 160 160"><circle class="bgc" cx="80" cy="80" r="70"/><circle class="a1" cx="80" cy="80" r="70"/></svg>
+              <div class="it mc-0"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8.5"/></svg></div>
+              <div class="it mc-1"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg><span>Je vous écoute</span></div>
+              <div class="it mc-2"><svg viewBox="0 0 24 24"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg><b class="num"></b><em class="rec"><u></u>REC</em></div>
+              <div class="it mc-3"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.3 6.4 6.4 2.3-6.4 2.3L12 20l-2.3-6.5-6.4-2.3 6.4-2.3z"/></svg><span>Analyse…</span></div>
+              <div class="it mc-4"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg><span>Réponse</span></div>
+            </div>
+            <div class="mc-wave"><i style="--i:0;--h:36%"></i><i style="--i:1;--h:73%"></i><i style="--i:2;--h:40%"></i><i style="--i:3;--h:77%"></i><i style="--i:4;--h:44%"></i><i style="--i:5;--h:81%"></i><i style="--i:6;--h:48%"></i><i style="--i:7;--h:85%"></i><i style="--i:8;--h:52%"></i><i style="--i:9;--h:89%"></i><i style="--i:10;--h:56%"></i><i style="--i:11;--h:93%"></i><i style="--i:12;--h:60%"></i><i style="--i:13;--h:27%"></i><i style="--i:14;--h:64%"></i><i style="--i:15;--h:31%"></i><i style="--i:16;--h:68%"></i><i style="--i:17;--h:35%"></i><i style="--i:18;--h:72%"></i><i style="--i:19;--h:39%"></i><i style="--i:20;--h:76%"></i><i style="--i:21;--h:43%"></i><i style="--i:22;--h:80%"></i><i style="--i:23;--h:47%"></i><i style="--i:24;--h:84%"></i><i style="--i:25;--h:51%"></i><i style="--i:26;--h:88%"></i><i style="--i:27;--h:55%"></i><i style="--i:28;--h:92%"></i><i style="--i:29;--h:59%"></i><i style="--i:30;--h:26%"></i><i style="--i:31;--h:63%"></i><i style="--i:32;--h:30%"></i><i style="--i:33;--h:67%"></i></div>
+          </div>
+          <div class="pl-wrap"><p class="pl-cap"><i></i>Chronologie en temps réel · une question</p><ol class="pl" aria-hidden="true"><li class="pl-n" data-d="0.9"><span class="pl-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8.5"/></svg></span><h4>Clic</h4><b class="pl-chip">bas gauche</b><p>Un clic par question</p><i class="pl-bar"></i></li><li class="pl-n" data-d="2"><span class="pl-ic"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg></span><h4>« Je vous écoute »</h4><b class="pl-chip">voix</b><p>Attendez la fin de la phrase</p><i class="pl-bar"></i></li><li class="pl-n" data-d="6" data-cnt><span class="pl-ic"><svg viewBox="0 0 24 24"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span><h4>Enregistrement</h4><b class="pl-chip">6 s</b><p>Parlez pendant ce temps</p><i class="pl-bar"></i></li><li class="pl-n" data-d="3"><span class="pl-ic"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.3 6.4 6.4 2.3-6.4 2.3L12 20l-2.3-6.5-6.4-2.3 6.4-2.3z"/></svg></span><h4>Analyse</h4><b class="pl-chip">variable</b><p>« Analyse de l'image en cours »</p><i class="pl-bar"></i></li><li class="pl-n" data-d="3"><span class="pl-ic"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg></span><h4>Réponse</h4><b class="pl-chip">voix</b><p>Retour vocal dans la langue choisie</p><i class="pl-bar"></i></li></ol></div>
+        </li>
+        <li class="use-step">
+          <span class="use-node" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h11l-3-3"/><path d="M17 17H6l3 3"/></svg><em>8</em></span>
+          <div class="use-card glass" data-k="Étape 8" data-n="8"><h3>Revenir en mode navigation</h3><p>Pour reprendre le guidage, appuyez de nouveau <b>une seule fois</b> sur le bouton en haut à droite du malvoyant. L'assistant dit «&nbsp;Arrêt de votre assistant. Au revoir.&nbsp;» et s'arrête (8 secondes au maximum), la caméra est libérée (1 seconde), puis la navigation se recharge (environ 3 secondes). Vous entendez «&nbsp;Mode navigation.&nbsp;», puis 3 secondes de silence : les détections vocales sont alors réactivées, comme à l'étape 4.</p><div class="use-note" data-label="Temps d'attente"><p>Ne réappuyez pas sur le bouton pendant ce retour : l'appui serait ignoré. Attendez la fin du silence avant de vous déplacer.</p></div></div>
+          <div class="use-vis v-swap" aria-hidden="true">
+            <div class="sw-row">
+              <div class="sw-orb sw-a"><svg class="sw-r" viewBox="0 0 120 120"><circle class="bgc" cx="60" cy="60" r="54"/><circle class="arc" cx="60" cy="60" r="54"/></svg><svg class="ic" viewBox="0 0 24 24"><path d="M12 2.5l2.3 6.4 6.4 2.3-6.4 2.3L12 20l-2.3-6.5-6.4-2.3 6.4-2.3z"/></svg><b class="num"></b><small>Assistant</small></div>
+              <div class="sw-link"><i></i></div>
+              <div class="sw-orb sw-b"><svg class="sw-r" viewBox="0 0 120 120"><circle class="bgc" cx="60" cy="60" r="54"/><circle class="arc" cx="60" cy="60" r="54"/></svg><div class="sw-radar"><b></b></div><div class="bt-waves"><i></i><i></i><i></i></div><svg class="ic" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><b class="num"></b><small>Navigation</small></div>
+            </div>
+            <p class="sw-cap"><span class="c0">Appui sur le bouton IA</span><span class="c1">L'assistant s'arrête</span><span class="c2">Caméra libérée</span><span class="c3">La navigation se recharge</span><span class="c4">« Mode navigation. »</span><span class="c5">Silence avant les détections</span><span class="c6">Navigation active</span></p>
+          </div>
+          <div class="pl-wrap"><p class="pl-cap"><i></i>Chronologie en temps réel · retour en navigation</p><ol class="pl" aria-hidden="true"><li class="pl-n" data-d="0.9"><span class="pl-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8.5"/></svg></span><h4>Appui</h4><b class="pl-chip">haut droite</b><p>Un seul appui sur le bouton IA</p><i class="pl-bar"></i></li><li class="pl-n" data-d="8" data-cnt><span class="pl-ic"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></span><h4>Arrêt assistant</h4><b class="pl-chip">≤ 8 s</b><p>« Arrêt de votre assistant. Au revoir. »</p><i class="pl-bar"></i></li><li class="pl-n" data-d="1" data-cnt><span class="pl-ic"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span><h4>Caméra</h4><b class="pl-chip">1 s</b><p>Libérée pour la navigation</p><i class="pl-bar"></i></li><li class="pl-n" data-d="3" data-cnt><span class="pl-ic"><svg viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7 3c0 5 5 6 5 9s-5 4-5 9M17 3c0 5-5 6-5 9s5 4 5 9"/></svg></span><h4>Chargement</h4><b class="pl-chip">≈ 3 s</b><p>La navigation se recharge</p><i class="pl-bar"></i></li><li class="pl-n" data-d="2"><span class="pl-ic"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg></span><h4>Annonce</h4><b class="pl-chip">voix</b><p>« Mode navigation. »</p><i class="pl-bar"></i></li><li class="pl-n" data-d="3" data-cnt><span class="pl-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></span><h4>Silence</h4><b class="pl-chip">3 s</b><p>Avant les détections vocales</p><i class="pl-bar"></i></li><li class="pl-n" data-d="2"><span class="pl-ic"><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><h4>Navigation active</h4><b class="pl-chip">prête</b><p>Le guidage reprend</p><i class="pl-bar"></i></li></ol></div>
+        </li>
+      </ol>
+      <section id="langue" class="lg glass reveal" aria-labelledby="lgT">
+        <div class="lg-aurora" aria-hidden="true"><i></i><i></i><span class="lg-float" style="--x:8%;--w:0s">Bonjour</span><span class="lg-float" style="--x:34%;--w:-3s">Hello</span><span class="lg-float" style="--x:58%;--w:-6s" dir="rtl" lang="ar">مرحبا</span><span class="lg-float" style="--x:80%;--w:-1.5s">Salut</span><span class="lg-float" style="--x:20%;--w:-4.5s">Welcome</span><span class="lg-float" style="--x:90%;--w:-7.5s" dir="rtl" lang="ar">أهلا</span></div>
+        <div class="lg-txt">
+          <p class="eyebrow">Bon à savoir · Langue de la voix</p>
+          <h3 id="lgT"><span class="grad">Changer la langue du retour vocal</span></h3>
+          <p class="lg-def"><span class="lg-tag">Par défaut</span>Le retour vocal du dispositif est en <b>français</b>.</p>
+          <p>Pour changer de langue, appuyez sur le <b>bouton en bas à droite</b> (côté droit du malvoyant). Chaque appui passe à la langue suivante, dans l'ordre :</p>
+          <ol class="lg-seq" aria-label="Ordre des langues">
+            <li style="--k:#00e5ff"><b>FR</b>Français</li>
+            <li style="--k:#7c4dff;--kt:#fff"><b>EN</b>Anglais</li>
+            <li style="--k:#ff3d9a"><b>AR</b>Arabe</li>
+          </ol>
+          <div class="use-note" data-label="Remarque"><p>Le changement n'est pas automatique : appuyez sur le bouton en bas à droite à chaque fois que vous souhaitez changer de langue.</p></div>
+        </div>
+        <div class="lg-vis" aria-hidden="true">
+          <div class="lg-says">
+            <span class="lg-say"><small>FR</small>Obstacle devant vous</span>
+            <span class="lg-say"><small>EN</small>Obstacle ahead</span>
+            <span class="lg-say" dir="rtl" lang="ar"><small>AR</small>عائق أمامك</span>
+          </div>
+          <div class="lg-eq"></div>
+          <div class="lg-dev">
+            <div class="lg-row">
+              <span class="lg-btn top"><i class="lg-ping"></i><i class="lg-ping"></i><svg viewBox="0 0 34 34"><circle cx="17" cy="17" r="12"/><path d="M5 17h24"/><ellipse class="lg-mer" cx="17" cy="17" rx="5.5" ry="12"/></svg><em class="lg-plus">clic</em></span>
+              <div class="lg-lab"><b>Bouton en bas à droite du malvoyant</b><span>Change la langue de la voix</span></div>
+            </div>
+            <div class="lg-row dim">
+              <span class="lg-btn bot"></span>
+              <div class="lg-lab"><b>Bouton en haut à droite du malvoyant</b><span>Active le modèle d'IA pour décrire l'environnement (étape 6)</span></div>
+            </div>
+            <div class="lg-row dim">
+              <span class="lg-btn bot lg-mid"></span>
+              <div class="lg-lab"><b>Bouton en bas à gauche du malvoyant</b><span>Enregistre votre voix à chaque clic, avant l'analyse par l'IA</span></div>
+            </div>
+            <div class="lg-row dim">
+              <span class="lg-btn bot lg-pow"></span>
+              <div class="lg-lab"><b>Bouton en haut à gauche du malvoyant</b><span>Met en marche ou arrête le système en entier</span></div>
+            </div>
+          </div>
+          <p class="lg-cap">Simulation</p>
+        </div>
+      </section>
+
+      <section id="delais" class="dl reveal" aria-labelledby="dlT">
+        <div class="dl-aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+        <p class="eyebrow">Bon à savoir · Temps d'attente</p>
+        <h3 id="dlT"><span class="grad">Dictionnaire des temps d'attente</span></h3>
+        <p class="dl-lead">Tout ce que le dispositif attend, de l'appui sur marche / arrêt jusqu'au retour en navigation. Chaque anneau se remplit en <b>temps réel</b> : regardez-le pour sentir la durée. Sous chaque délai, le nom du réglage dans le programme, pour l'équipe technique.</p>
+        <div class="tm">
+          <div class="tm-head"><span class="tm-live"><i></i>Session complète · lecture accélérée ×5</span><output class="tm-now" aria-live="off">t = 0 s</output></div>
+          <div class="tm-scroll"><div class="tm-board" data-t="76" style="--u:17px;--T:76"><div class="tm-ruler"></div><div class="tm-lane l-nav"><em class="tm-ln">Navigation</em><span class="tm-s k-ghost" style="--s:23;--d:45" data-s="23" data-d="45" data-n="Navigation suspendue">Navigation suspendue · un seul mode à la fois</span><span class="tm-s k-sil" style="--s:5;--d:3" data-s="5" data-d="3" data-n="Silence avant les détections" title="Silence avant les détections">3 s</span><span class="tm-s k-nav" style="--s:8;--d:12" data-s="8" data-d="12" data-n="Navigation active" title="Navigation active">Navigation active</span><span class="tm-s k-sil" style="--s:65;--d:3" data-s="65" data-d="3" data-n="Silence avant les détections" title="Silence avant les détections">3 s</span><span class="tm-s k-nav" style="--s:68;--d:8" data-s="68" data-d="8" data-n="Navigation active" title="Navigation active">Navigation active</span></div><div class="tm-lane l-ai"><em class="tm-ln">Assistant</em><span class="tm-s k-ai k-hatch" style="--s:24;--d:7" data-s="24" data-d="7" data-n="Chargement de l'assistant" title="Chargement de l'assistant">Chargement</span><span class="tm-s k-ai" style="--s:38;--d:6" data-s="38" data-d="6" data-n="Enregistrement de la question" title="Enregistrement de la question">6 s</span><span class="tm-s k-ai k-hatch" style="--s:44;--d:3" data-s="44" data-d="3" data-n="Analyse de l'image" title="Analyse de l'image">Analyse</span></div><div class="tm-lane l-voice"><em class="tm-ln">Voix</em><span class="tm-s k-voice" style="--s:3;--d:2" data-s="3" data-d="2" data-n="« Système prêt. Mode navigation. »" title="« Système prêt. Mode navigation. »"></span><span class="tm-s k-voice" style="--s:24;--d:3" data-s="24" data-d="3" data-n="« Assistant en cours de chargement »" title="« Assistant en cours de chargement »"></span><span class="tm-s k-voice" style="--s:31;--d:3" data-s="31" data-d="3" data-n="« Assistant prêt. Appuyez sur le bouton question. »" title="« Assistant prêt. Appuyez sur le bouton question. »"></span><span class="tm-s k-voice" style="--s:36;--d:2" data-s="36" data-d="2" data-n="« Je vous écoute »" title="« Je vous écoute »"></span><span class="tm-s k-voice k-hatch" style="--s:47;--d:4" data-s="47" data-d="4" data-n="Réponse à voix haute" title="Réponse à voix haute"></span><span class="tm-s k-voice" style="--s:51;--d:2" data-s="51" data-d="2" data-n="« Arrêt de votre assistant. Au revoir. »" title="« Arrêt de votre assistant. Au revoir. »"></span><span class="tm-s k-voice" style="--s:63;--d:2" data-s="63" data-d="2" data-n="« Mode navigation. »" title="« Mode navigation. »"></span></div><div class="tm-lane l-sys"><em class="tm-ln">Système</em><span class="tm-s k-sys" style="--s:0;--d:3" data-s="0" data-d="3" data-n="Chargement de la navigation" title="Chargement de la navigation">Chargement</span><span class="tm-s k-sys" style="--s:20;--d:3" data-s="20" data-d="3" data-n="Arrêt de la navigation" title="Arrêt de la navigation">≤ 3 s</span><span class="tm-s k-sys" style="--s:23;--d:1" data-s="23" data-d="1" data-n="Caméra libérée" title="Caméra libérée"></span><span class="tm-s k-sys" style="--s:51;--d:8" data-s="51" data-d="8" data-n="Arrêt de l'assistant" title="Arrêt de l'assistant">≤ 8 s</span><span class="tm-s k-sys" style="--s:59;--d:1" data-s="59" data-d="1" data-n="Caméra libérée" title="Caméra libérée"></span><span class="tm-s k-sys" style="--s:60;--d:3" data-s="60" data-d="3" data-n="Chargement de la navigation" title="Chargement de la navigation">3 s</span></div><div class="tm-lane l-btn"><em class="tm-ln">Boutons</em><b class="tm-pin" style="--s:0" data-s="0" data-d="1" data-n="Appui : Marche"><svg viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg><i>Marche</i></b><b class="tm-pin" style="--s:20" data-s="20" data-d="1" data-n="Appui : IA"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.3 6.4 6.4 2.3-6.4 2.3L12 20l-2.3-6.5-6.4-2.3 6.4-2.3z"/></svg><i>IA</i></b><b class="tm-pin" style="--s:36" data-s="36" data-d="1" data-n="Appui : Question"><svg viewBox="0 0 24 24"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg><i>Question</i></b><b class="tm-pin" style="--s:51" data-s="51" data-d="1" data-n="Appui : IA"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.3 6.4 6.4 2.3-6.4 2.3L12 20l-2.3-6.5-6.4-2.3 6.4-2.3z"/></svg><i>IA</i></b></div><i class="tm-line"></i></div></div>
+          <ul class="tm-legend"><li class="k-sys">Système</li><li class="k-nav">Navigation</li><li class="k-ai">Assistant</li><li class="k-voice">Voix</li><li class="k-sil">Silence</li><li class="k-hatch">Durée variable</li></ul>
+        </div>
+        <div class="dg" style="--c:var(--c1)"><h4 class="dg-h"><em>01</em><span>Démarrage</span><small>Du clic marche / arrêt à la navigation active</small></h4><div class="dg-grid"><article class="dc" style="--c:var(--c1)"><div class="dc-rings"><span class="rg" data-t="3" data-o="0"><b>≈3<small>s</small></b></span></div><div class="dc-txt"><h4>Chargement de la navigation</h4><p>Durée observée entre l'appui sur marche / arrêt et la phrase « Système prêt. Mode navigation. ».</p><pre class="dc-code"><span class="k">MARQUEUR_NAVIGATION_PRET</span><span class="o"> = </span><span class="s">"NAVIGATION PRET"</span></pre></div></article><article class="dc" style="--c:var(--c1)"><div class="dc-rings"><span class="rg" data-t="3" data-o="0"><b>3<small>s</small></b></span></div><div class="dc-txt"><h4>Silence après l'annonce</h4><p>Pause avant l'activation des détections vocales, au démarrage comme au retour en navigation.</p><pre class="dc-code"><span class="k">DELAI_APRES_ANNONCE</span><span class="o"> = </span><span class="n">3.0</span></pre></div></article></div></div>
+        <div class="dg" style="--c:var(--c2)"><h4 class="dg-h"><em>02</em><span>Navigation</span><small>Quand le système guide, il parle peu et bien</small></h4><div class="dg-grid"><article class="dc" style="--c:var(--c2)"><div class="dc-rings"><span class="rg" data-t="1.5" data-o="0"><b>1,5<small>s</small></b></span></div><div class="dc-txt"><h4>Stabilité d'une consigne</h4><p>La même consigne doit rester identique pendant ce temps avant d'être dite.</p><pre class="dc-code"><span class="k">STABILITE_SECONDES</span><span class="o"> = </span><span class="n">1.5</span></pre></div></article><article class="dc" style="--c:var(--c2)"><div class="dc-rings"><span class="rg" data-t="5" data-o="0"><b>5<small>s</small></b></span></div><div class="dc-txt"><h4>Entre deux annonces</h4><p>Délai minimum entre deux consignes vocales de navigation.</p><pre class="dc-code"><span class="k">MIN_ENTRE_ANNONCES</span><span class="o"> = </span><span class="n">5.0</span></pre></div></article><article class="dc" style="--c:var(--c2)"><div class="dc-rings"><span class="rg" data-t="4" data-o="0"><b>4<small>s</small></b></span></div><div class="dc-txt"><h4>Scène vide</h4><p>Sans obstacle pendant ce temps, la scène est réinitialisée : une personne qui revient sera annoncée.</p><pre class="dc-code"><span class="k">DELAI_SCENE_VIDE</span><span class="o"> = </span><span class="n">4.0</span></pre></div></article><article class="dc" style="--c:var(--c2)"><div class="dc-rings"><span class="rg inf" style="--c:var(--c2)"><b>∞<small></small></b></span></div><div class="dc-txt"><h4>Répétition d'une même scène</h4><p>Une même phrase n'est jamais répétée tant que la scène ne change pas.</p><pre class="dc-code"><span class="k">DELAI_REPETITION_MEME_SCENE</span><span class="o"> = </span><span class="n">None</span>  <span class="c"># jamais</span></pre></div></article></div></div>
+        <div class="dg" style="--c:var(--c3)"><h4 class="dg-h"><em>03</em><span>Changement de mode et assistant</span><small>Un seul mode à la fois, chacun dans son propre processus</small></h4><div class="dg-grid"><article class="dc" style="--c:var(--c3)"><div class="dc-rings"><span class="rg" data-t="3" data-o="0" style="--c:var(--c3)"><b>3<small>s</small></b></span><span class="rg" data-t="8" data-o="0.7" style="--c:var(--c3)"><b>8<small>s</small></b></span></div><div class="dc-txt"><h4>Arrêt propre d'un mode</h4><p>Temps laissé à chaque mode pour s'arrêter proprement : 3 s pour la navigation, 8 s pour l'assistant.</p><pre class="dc-code"><span class="k">DELAI_ARRET_PAR_MODE</span><span class="o"> = {</span>
+  <span class="s">"yolo"</span><span class="o">: </span><span class="n">3</span><span class="o">,</span>
+  <span class="s">"assistant"</span><span class="o">: </span><span class="n">8</span>
+<span class="o">}</span></pre></div></article><article class="dc" style="--c:var(--c3)"><div class="dc-rings"><span class="rg" data-t="1" data-o="0"><b>1<small>s</small></b></span></div><div class="dc-txt"><h4>Libération de la caméra</h4><p>Attente après l'arrêt d'un mode, pour que la caméra soit bien libre avant de lancer l'autre.</p><pre class="dc-code"><span class="k">PAUSE_CAMERA</span><span class="o"> = </span><span class="n">1.0</span></pre></div></article><article class="dc" style="--c:var(--c3)"><div class="dc-rings"><span class="rg" data-t="6" data-o="0"><b>6<small>s</small></b></span></div><div class="dc-txt"><h4>Enregistrement de la question</h4><p>Durée fixe d'écoute après « Je vous écoute ».</p><pre class="dc-code"><span class="k">DUREE_ENREGISTREMENT</span><span class="o"> = </span><span class="n">6</span></pre></div></article><article class="dc" style="--c:var(--c3)"><div class="dc-rings"><span class="rg long" style="--c:var(--c3)"><b>30<small>min</small></b></span></div><div class="dc-txt"><h4>Mémoire du modèle de vision</h4><p>Le modèle reste chargé 30 minutes ; il est préchargé à l'appel de l'assistant et déchargé au retour en navigation.</p><pre class="dc-code"><span class="k">keep_alive</span><span class="o">=</span><span class="s">"30m"</span>
+<span class="k">DECHARGER_MOONDREAM_EN_YOLO</span><span class="o"> = </span><span class="n">True</span></pre></div></article></div></div>
+        <div class="dg" style="--c:#ffd166"><h4 class="dg-h"><em>04</em><span>Sécurités et relance</span><small>Ce qui se passe quand quelque chose tarde ou plante</small></h4><div class="dg-grid"><article class="dc" style="--c:#ffd166"><div class="dc-rings"><span class="rg long" style="--c:#ffd166"><b>60<small>s</small></b></span></div><div class="dc-txt"><h4>Chargement de la navigation</h4><p>Si le chargement n'est pas signalé, l'annonce est faite quand même après ce délai maximum.</p><pre class="dc-code"><span class="k">DELAI_MAX_CHARGEMENT_YOLO</span><span class="o"> = </span><span class="n">60</span></pre></div></article><article class="dc" style="--c:#ffd166"><div class="dc-rings"><span class="rg long" style="--c:#ffd166"><b>90<small>s</small></b></span></div><div class="dc-txt"><h4>Feu vert du lanceur</h4><p>Si le lanceur n'envoie jamais le feu vert, la navigation se remet à parler d'elle-même.</p><pre class="dc-code"><span class="k">DELAI_MAX_ATTENTE_LANCEUR</span><span class="o"> = </span><span class="n">90</span></pre></div></article><article class="dc" style="--c:#ffd166"><div class="dc-rings"><span class="rg" data-t="3" data-o="0" style="--c:#ffd166"><b>3<small>s</small></b></span><span class="rg" data-t="3" data-o="1.2" style="--c:#ffd166"><b>3<small>s</small></b></span></div><div class="dc-txt"><h4>Arrêt forcé</h4><p>Si un mode ne s'arrête pas à temps : 3 s après l'arrêt demandé (SIGTERM), puis 3 s avant l'arrêt sans appel (SIGKILL).</p><pre class="dc-code"><span class="k">SIGTERM</span><span class="o">, </span><span class="n">3</span>
+<span class="k">SIGKILL</span><span class="o">, </span><span class="n">3</span></pre></div></article><article class="dc" style="--c:#ffd166"><div class="dc-rings"><span class="rg" data-t="10" data-o="0" style="--c:#ffd166"><b>10<small>s</small></b></span><span class="rg" data-t="3" data-o="0.9" style="--c:#ffd166"><b>3<small>s</small></b></span></div><div class="dc-txt"><h4>Relance automatique</h4><p>Un mode qui plante est relancé : après 10 s s'il s'est arrêté en moins de 15 s, après 3 s sinon.</p><pre class="dc-code"><span class="k">attente</span><span class="o"> = </span><span class="n">10</span> if <span class="k">duree</span> &lt; <span class="n">15</span> else <span class="n">3</span></pre></div></article><article class="dc" style="--c:#ffd166"><div class="dc-rings"><span class="rg long" style="--c:#ffd166"><b>10<small>min</small></b></span></div><div class="dc-txt"><h4>Traduction de secours</h4><p>Si le service de traduction principal bloque, il est ignoré pendant 10 minutes.</p><pre class="dc-code"><span class="k">PAUSE_GOOGLE</span><span class="o"> = </span><span class="n">600</span></pre></div></article><article class="dc" style="--c:#ffd166"><div class="dc-rings"><span class="rg" data-t="0.2" data-o="0"><b>0,2<small>s</small></b></span><span class="rg" data-t="0.25" data-o="0.3" style="--c:#ffd166"><b>0,25<small>s</small></b></span><span class="rg" data-t="0.3" data-o="0.6" style="--c:#ffd166"><b>0,3<small>s</small></b></span></div><div class="dc-txt"><h4>Anti-rebond des boutons</h4><p>Un appui n'est compté qu'une fois : 0,2 s (navigation), 0,25 s (assistant), 0,3 s (changement de mode).</p><pre class="dc-code"><span class="k">bounce_time</span><span class="o"> = </span><span class="n">0.2</span> / <span class="n">0.25</span> / <span class="n">0.3</span></pre></div></article></div></div>
+        <div class="use-note" data-label="Remarque"><p>Aucun de ces délais n'est un blocage : si le dispositif reste silencieux plus longtemps que prévu, attendez l'annonce vocale avant d'appuyer de nouveau sur un bouton.</p></div>
+      </section>
+
+      <!-- GUIDE › 02 · Bon à savoir : dictionnaire des champs de l'assistant et annonce « Champ détecté » (styles : champs-wow.css · logique : champs-wow.js) -->
+      <section id="champs" class="dl ch reveal" aria-labelledby="chT">
+        <div class="dl-aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+        <p class="eyebrow">Bon à savoir · Modèle d'intelligence artificielle</p>
+        <h3 id="chT"><span class="grad">Dictionnaire des champs et « Champ détecté »</span></h3>
+        <p class="dl-lead">Quand vous posez une question à voix haute (étape 7), l'assistant cherche d'abord <b>de quoi vous parlez</b> : il compare vos mots à un dictionnaire de <b>36 champs</b>, reconnus en français, en anglais et en arabe. Une fois le champ trouvé, il vous l'annonce (« Champ détecté ») puis envoie au modèle d'IA une question précise, propre à ce champ. Sous chaque élément, le nom du réglage dans le programme, pour l'équipe technique.</p>
+
+        <div class="ch-demo" aria-hidden="true">
+          <p class="ch-demo-cap"><i></i>Simulation · ce que vous dites, ce que vous entendez</p>
+          <div class="ch-chat">
+            <p class="ch-b ch-you"><small>Vous dites</small><span class="ch-txt"></span></p>
+            <p class="ch-b ch-det"><small>L'assistant annonce</small><span class="ch-txt"></span><em class="ch-tag"></em></p>
+            <p class="ch-b ch-ana"><small>Puis</small><span class="ch-txt"></span></p>
+          </div>
+          <ul class="ch-dots"><li></li><li></li><li></li><li></li></ul>
+        </div>
+
+        <div class="dg" style="--c:var(--c1)"><h4 class="dg-h"><em>01</em><span>De votre phrase au champ détecté</span><small>Ce qui se passe entre la fin de l'enregistrement et l'analyse de l'image</small></h4><div class="dg-grid">
+          <article class="dc" style="--c:var(--c1)"><div class="ch-n">1</div><div class="dc-txt"><h4>Votre phrase est écrite</h4><p>L'enregistrement de votre voix est transformé en texte, dans la langue du retour vocal choisie.</p><pre class="dc-code"><span class="k">question</span><span class="o"> = </span><span class="k">reconnaitre_parole</span><span class="o">(</span><span class="k">langue</span><span class="o">)</span></pre></div></article>
+          <article class="dc" style="--c:var(--c1)"><div class="ch-n">2</div><div class="dc-txt"><h4>Comparaison au dictionnaire</h4><p>Le texte est mis en minuscules, sans accents ni ponctuation, puis comparé aux expressions de chaque champ. Le pluriel est accepté.</p><pre class="dc-code"><span class="k">detecter_champ</span><span class="o">(</span><span class="k">question</span><span class="o">)</span></pre></div></article>
+          <article class="dc" style="--c:var(--c1)"><div class="ch-n">3</div><div class="dc-txt"><h4>Le champ le plus précis gagne</h4><p>Chaque expression reconnue rapporte autant de points que de mots : « salle d'attente » (2 points) l'emporte sur « salle » (1 point). En cas d'égalité, le champ placé le plus haut dans le dictionnaire gagne.</p><pre class="dc-code"><span class="k">score</span><span class="o"> = </span>nombre de mots reconnus</pre></div></article>
+          <article class="dc" style="--c:var(--c1)"><div class="ch-n">4</div><div class="dc-txt"><h4>« Champ détecté »</h4><p>Avant l'analyse, l'assistant dit sur quoi portera la réponse, dans la langue choisie, puis « Analyse de l'image en cours ». Le modèle reçoit une question fixe, en anglais, associée au champ.</p><pre class="dc-code"><span class="k">PHRASE_CHAMP</span><span class="o"> = {</span>
+  <span class="s">"fr"</span><span class="o">: </span><span class="s">"Champ détecté : {nom}."</span><span class="o">,</span>
+  <span class="s">"en"</span><span class="o">: </span><span class="s">"Field detected: {nom}."</span>
+<span class="o">}</span></pre></div></article>
+        </div></div>
+
+        <div class="dg" style="--c:#ffd166"><h4 class="dg-h"><em>02</em><span>Cas particuliers</span><small>Quand la phrase sort du cadre habituel</small></h4><div class="dg-grid">
+          <article class="dc" style="--c:#ffd166"><div class="ch-n">?</div><div class="dc-txt"><h4>Aucun champ reconnu</h4><p>L'assistant dit « Aucun champ détecté. Je décris ce que je vois en détail. », décrit la scène complète, puis lit le texte visible s'il y en a.</p><pre class="dc-code"><span class="k">HORS_CHAMP_DECRIRE</span><span class="o"> = </span><span class="n">True</span>
+<span class="k">DESCRIPTION_LIRE_TEXTE</span><span class="o"> = </span><span class="n">True</span></pre></div></article>
+          <article class="dc" style="--c:#ffd166"><div class="ch-n">⚠</div><div class="dc-txt"><h4>Rappel de prudence</h4><p>Pour 13 champs sensibles (obstacles, escaliers, médicaments, monnaie…) et après toute description détaillée, l'assistant ajoute : « Attention : information à vérifier avec une autre personne. »</p><pre class="dc-code"><span class="k">"prudence"</span><span class="o">: </span><span class="n">True</span></pre></div></article>
+          <article class="dc" style="--c:#ffd166"><div class="ch-n">☰</div><div class="dc-txt"><h4>Le champ « aide »</h4><p>Sans caméra et sans annonce de champ : l'assistant énumère simplement des exemples de questions à poser. Dites « aide » ou « options ».</p><pre class="dc-code"><span class="s">"aide"</span><span class="o">: { </span><span class="s">"prompt"</span><span class="o">: </span><span class="n">None</span><span class="o"> }</span></pre></div></article>
+          <article class="dc" style="--c:#ffd166"><div class="ch-n">DH</div><div class="dc-txt"><h4>Le champ « monnaie »</h4><p>Billets (20, 50, 100, 200 dirhams) et pièces sont comparés à des photos de référence enregistrées ; plusieurs pièces posées ensemble sont comptées.</p><pre class="dc-code"><span class="k">BILLETS_EXISTANTS</span><span class="o"> = {</span><span class="n">20</span><span class="o">, </span><span class="n">50</span><span class="o">, </span><span class="n">100</span><span class="o">, </span><span class="n">200</span><span class="o">}</span></pre></div></article>
+        </div></div>
+
+        <div class="ch-sep"><span>Le dictionnaire complet</span><small>36 champs · exemples de mots reconnus en français</small></div>
+<div class="dg ch-grp" style="--c:var(--c2)"><h4 class="dg-h"><em>1 champ</em><span>Aide</span><small>sans caméra</small></h4><div class="ch-grid"><article class="ch-f"><div class="ch-f-top"><h5>Demander de l'aide</h5></div><ul class="ch-ex"><li>aide</li><li>aidez moi</li><li>que puis je demander</li><li>quelles questions</li><li>options</li></ul><p class="ch-lg"><span>EN</span>help<span>AR</span><bdi dir="rtl" lang="ar">مساعدة</bdi></p><code class="ch-key">aide</code></article></div></div>
+<div class="dg ch-grp" style="--c:var(--c1)"><h4 class="dg-h"><em>3 champs</em><span>Personnes</span><small>qui est là, qui travaille ici</small></h4><div class="ch-grid"><article class="ch-f"><div class="ch-f-top"><h5>Les personnes</h5></div><ul class="ch-ex"><li>personne</li><li>personnes</li><li>quelqu'un</li><li>qui est devant moi</li><li>qui est là</li></ul><p class="ch-lg"><span>EN</span>person<span>AR</span><bdi dir="rtl" lang="ar">شخص</bdi></p><code class="ch-key">personne</code></article><article class="ch-f"><div class="ch-f-top"><h5>Le personnel</h5></div><ul class="ch-ex"><li>médecin</li><li>docteur</li><li>infirmier</li><li>infirmière</li><li>dentiste</li></ul><p class="ch-lg"><span>EN</span>doctor<span>AR</span><bdi dir="rtl" lang="ar">طبيب</bdi></p><code class="ch-key">personnel</code></article><article class="ch-f"><div class="ch-f-top"><h5>La salle d'attente</h5></div><ul class="ch-ex"><li>salle d'attente</li><li>attendre</li><li>file d'attente</li><li>queue</li><li>place libre</li></ul><p class="ch-lg"><span>EN</span>waiting room<span>AR</span><bdi dir="rtl" lang="ar">قاعة الانتظار</bdi></p><code class="ch-key">attente</code></article></div></div>
+<div class="dg ch-grp" style="--c:var(--c2)"><h4 class="dg-h"><em>10 champs</em><span>Déplacement et orientation</span><small>se repérer, avancer, trouver un lieu</small></h4><div class="ch-grid"><article class="ch-f"><div class="ch-f-top"><h5>Les obstacles</h5><b class="ch-pru" title="Rappel de prudence après la réponse">⚠ prudence</b></div><ul class="ch-ex"><li>obstacle</li><li>obstacles</li><li>bloqué</li><li>sur mon chemin</li><li>chemin</li></ul><p class="ch-lg"><span>EN</span>obstacle<span>AR</span><bdi dir="rtl" lang="ar">عائق</bdi></p><code class="ch-key">obstacle</code></article><article class="ch-f"><div class="ch-f-top"><h5>Le couloir</h5><b class="ch-pru" title="Rappel de prudence après la réponse">⚠ prudence</b></div><ul class="ch-ex"><li>couloir</li><li>couloirs</li><li>hall</li><li>allée</li><li>passage libre</li></ul><p class="ch-lg"><span>EN</span>corridor<span>AR</span><bdi dir="rtl" lang="ar">ممر</bdi></p><code class="ch-key">couloir</code></article><article class="ch-f"><div class="ch-f-top"><h5>Les portes</h5></div><ul class="ch-ex"><li>porte</li><li>portes</li><li>entrée</li><li>entrer</li><li>poignée</li></ul><p class="ch-lg"><span>EN</span>door<span>AR</span><bdi dir="rtl" lang="ar">باب</bdi></p><code class="ch-key">porte</code></article><article class="ch-f"><div class="ch-f-top"><h5>La sortie</h5><b class="ch-pru" title="Rappel de prudence après la réponse">⚠ prudence</b></div><ul class="ch-ex"><li>sortie</li><li>sortie de secours</li><li>issue de secours</li><li>évacuation</li></ul><p class="ch-lg"><span>EN</span>exit<span>AR</span><bdi dir="rtl" lang="ar">مخرج</bdi></p><code class="ch-key">sortie</code></article><article class="ch-f"><div class="ch-f-top"><h5>Les escaliers</h5><b class="ch-pru" title="Rappel de prudence après la réponse">⚠ prudence</b></div><ul class="ch-ex"><li>escalier</li><li>escaliers</li><li>marche</li><li>marches</li><li>rampe</li></ul><p class="ch-lg"><span>EN</span>stairs<span>AR</span><bdi dir="rtl" lang="ar">سلم</bdi></p><code class="ch-key">escalier</code></article><article class="ch-f"><div class="ch-f-top"><h5>L'ascenseur</h5></div><ul class="ch-ex"><li>ascenseur</li><li>ascenseurs</li><li>monte-charge</li></ul><p class="ch-lg"><span>EN</span>elevator<span>AR</span><bdi dir="rtl" lang="ar">مصعد</bdi></p><code class="ch-key">ascenseur</code></article><article class="ch-f"><div class="ch-f-top"><h5>Les toilettes</h5></div><ul class="ch-ex"><li>toilette</li><li>toilettes</li><li>wc</li><li>sanitaires</li><li>lavabo</li></ul><p class="ch-lg"><span>EN</span>toilet<span>AR</span><bdi dir="rtl" lang="ar">مرحاض</bdi></p><code class="ch-key">toilettes</code></article><article class="ch-f"><div class="ch-f-top"><h5>L'accueil</h5></div><ul class="ch-ex"><li>accueil</li><li>réception</li><li>comptoir</li><li>guichet</li><li>secrétariat</li></ul><p class="ch-lg"><span>EN</span>reception<span>AR</span><bdi dir="rtl" lang="ar">استقبال</bdi></p><code class="ch-key">accueil</code></article><article class="ch-f"><div class="ch-f-top"><h5>Le sol</h5><b class="ch-pru" title="Rappel de prudence après la réponse">⚠ prudence</b></div><ul class="ch-ex"><li>sol</li><li>plancher</li><li>trou</li><li>trottoir</li><li>mouillé</li></ul><p class="ch-lg"><span>EN</span>floor<span>AR</span><bdi dir="rtl" lang="ar">أرض</bdi></p><code class="ch-key">sol</code></article><article class="ch-f"><div class="ch-f-top"><h5>Les numéros de salle ou d'étage</h5></div><ul class="ch-ex"><li>numéro</li><li>numéro de salle</li><li>numéro de chambre</li><li>salle</li><li>chambre</li></ul><p class="ch-lg"><span>EN</span>number<span>AR</span><bdi dir="rtl" lang="ar">رقم</bdi></p><code class="ch-key">numero</code></article></div></div>
+<div class="dg ch-grp" style="--c:#ffd166"><h4 class="dg-h"><em>4 champs</em><span>Sécurité</span><small>usine, chantier, hôpital</small></h4><div class="ch-grid"><article class="ch-f"><div class="ch-f-top"><h5>Les dangers</h5><b class="ch-pru" title="Rappel de prudence après la réponse">⚠ prudence</b></div><ul class="ch-ex"><li>danger</li><li>dangereux</li><li>attention</li><li>avertissement</li><li>zone interdite</li></ul><p class="ch-lg"><span>EN</span>danger<span>AR</span><bdi dir="rtl" lang="ar">خطر</bdi></p><code class="ch-key">danger</code></article><article class="ch-f"><div class="ch-f-top"><h5>Les machines</h5><b class="ch-pru" title="Rappel de prudence après la réponse">⚠ prudence</b></div><ul class="ch-ex"><li>machine</li><li>machines</li><li>appareil</li><li>équipement</li><li>engin</li></ul><p class="ch-lg"><span>EN</span>machine<span>AR</span><bdi dir="rtl" lang="ar">آلة</bdi></p><code class="ch-key">machine</code></article><article class="ch-f"><div class="ch-f-top"><h5>Les équipements de protection</h5><b class="ch-pru" title="Rappel de prudence après la réponse">⚠ prudence</b></div><ul class="ch-ex"><li>casque</li><li>gilet</li><li>gants</li><li>lunettes de protection</li><li>masque</li></ul><p class="ch-lg"><span>EN</span>helmet<span>AR</span><bdi dir="rtl" lang="ar">خوذة</bdi></p><code class="ch-key">protection</code></article><article class="ch-f"><div class="ch-f-top"><h5>L'extincteur ou l'alarme incendie</h5><b class="ch-pru" title="Rappel de prudence après la réponse">⚠ prudence</b></div><ul class="ch-ex"><li>extincteur</li><li>incendie</li><li>alarme</li><li>feu</li></ul><p class="ch-lg"><span>EN</span>fire extinguisher<span>AR</span><bdi dir="rtl" lang="ar">طفاية</bdi></p><code class="ch-key">extincteur</code></article></div></div>
+<div class="dg ch-grp" style="--c:var(--c3)"><h4 class="dg-h"><em>3 champs</em><span>Santé</span><small>hôpital, cabinet dentaire</small></h4><div class="ch-grid"><article class="ch-f"><div class="ch-f-top"><h5>Le matériel médical</h5></div><ul class="ch-ex"><li>fauteuil dentaire</li><li>équipement médical</li><li>lit</li><li>brancard</li><li>civière</li></ul><p class="ch-lg"><span>EN</span>dental chair<span>AR</span><bdi dir="rtl" lang="ar">كرسي الأسنان</bdi></p><code class="ch-key">materiel_medical</code></article><article class="ch-f"><div class="ch-f-top"><h5>Les médicaments</h5><b class="ch-pru" title="Rappel de prudence après la réponse">⚠ prudence</b></div><ul class="ch-ex"><li>médicament</li><li>médicaments</li><li>boîte</li><li>comprimé</li><li>pilule</li></ul><p class="ch-lg"><span>EN</span>medicine<span>AR</span><bdi dir="rtl" lang="ar">دواء</bdi></p><code class="ch-key">medicament</code></article><article class="ch-f"><div class="ch-f-top"><h5>Le formulaire ou le document</h5></div><ul class="ch-ex"><li>formulaire</li><li>feuille</li><li>fiche</li><li>fiche médicale</li><li>questionnaire</li></ul><p class="ch-lg"><span>EN</span>form<span>AR</span><bdi dir="rtl" lang="ar">استمارة</bdi></p><code class="ch-key">formulaire</code></article></div></div>
+<div class="dg ch-grp" style="--c:var(--c1)"><h4 class="dg-h"><em>4 champs</em><span>Lecture et signalisation</span><small>textes, panneaux, écrans</small></h4><div class="ch-grid"><article class="ch-f"><div class="ch-f-top"><h5>La lecture du texte</h5></div><ul class="ch-ex"><li>lis</li><li>lire</li><li>lecture</li><li>lecture du texte</li><li>texte</li></ul><p class="ch-lg"><span>EN</span>read<span>AR</span><bdi dir="rtl" lang="ar">اقرأ</bdi></p><code class="ch-key">lecture</code></article><article class="ch-f"><div class="ch-f-top"><h5>La signalisation</h5></div><ul class="ch-ex"><li>panneau</li><li>panneaux</li><li>signalisation</li><li>feu rouge</li><li>feu tricolore</li></ul><p class="ch-lg"><span>EN</span>sign<span>AR</span><bdi dir="rtl" lang="ar">لافتة</bdi></p><code class="ch-key">signalisation</code></article><article class="ch-f"><div class="ch-f-top"><h5>L'écran</h5></div><ul class="ch-ex"><li>écran</li><li>écrans</li><li>télévision</li><li>télé</li><li>moniteur</li></ul><p class="ch-lg"><span>EN</span>screen<span>AR</span><bdi dir="rtl" lang="ar">شاشة</bdi></p><code class="ch-key">ecran</code></article><article class="ch-f"><div class="ch-f-top"><h5>Les boutons</h5></div><ul class="ch-ex"><li>bouton</li><li>boutons</li><li>interrupteur</li><li>sonnette</li><li>clavier</li></ul><p class="ch-lg"><span>EN</span>button<span>AR</span><bdi dir="rtl" lang="ar">زر</bdi></p><code class="ch-key">bouton</code></article></div></div>
+<div class="dg ch-grp" style="--c:var(--c2)"><h4 class="dg-h"><em>10 champs</em><span>Objets du quotidien</span><small>ce qui vous entoure</small></h4><div class="ch-grid"><article class="ch-f"><div class="ch-f-top"><h5>Les couleurs</h5></div><ul class="ch-ex"><li>couleur</li><li>couleurs</li></ul><p class="ch-lg"><span>EN</span>color<span>AR</span><bdi dir="rtl" lang="ar">لون</bdi></p><code class="ch-key">couleur</code></article><article class="ch-f"><div class="ch-f-top"><h5>Les chaises</h5></div><ul class="ch-ex"><li>chaise</li><li>chaises</li><li>fauteuil</li><li>siège</li><li>m'asseoir</li></ul><p class="ch-lg"><span>EN</span>chair<span>AR</span><bdi dir="rtl" lang="ar">كرسي</bdi></p><code class="ch-key">chaise</code></article><article class="ch-f"><div class="ch-f-top"><h5>Les tables</h5></div><ul class="ch-ex"><li>table</li><li>tables</li><li>bureau</li><li>plan de travail</li><li>établi</li></ul><p class="ch-lg"><span>EN</span>table<span>AR</span><bdi dir="rtl" lang="ar">طاولة</bdi></p><code class="ch-key">table</code></article><article class="ch-f"><div class="ch-f-top"><h5>Les fenêtres</h5></div><ul class="ch-ex"><li>fenêtre</li><li>fenêtres</li><li>vitre</li><li>lumière</li></ul><p class="ch-lg"><span>EN</span>window<span>AR</span><bdi dir="rtl" lang="ar">شباك</bdi></p><code class="ch-key">fenetre</code></article><article class="ch-f"><div class="ch-f-top"><h5>L'objet que vous tenez</h5></div><ul class="ch-ex"><li>ce que je tiens</li><li>dans ma main</li><li>dans mes mains</li><li>j'ai dans la main</li></ul><p class="ch-lg"><span>EN</span>in my hand<span>AR</span><bdi dir="rtl" lang="ar">في يدي</bdi></p><code class="ch-key">objet_main</code></article><article class="ch-f"><div class="ch-f-top"><h5>La nourriture</h5></div><ul class="ch-ex"><li>nourriture</li><li>aliment</li><li>repas</li><li>manger</li><li>fruit</li></ul><p class="ch-lg"><span>EN</span>food<span>AR</span><bdi dir="rtl" lang="ar">طعام</bdi></p><code class="ch-key">nourriture</code></article><article class="ch-f"><div class="ch-f-top"><h5>La monnaie</h5><b class="ch-pru" title="Rappel de prudence après la réponse">⚠ prudence</b></div><ul class="ch-ex"><li>monnaie</li><li>pièce</li><li>pièces</li><li>argent</li><li>billet</li></ul><p class="ch-lg"><span>EN</span>coin<span>AR</span><bdi dir="rtl" lang="ar">عملة</bdi></p><code class="ch-key">monnaie</code></article><article class="ch-f"><div class="ch-f-top"><h5>Les véhicules</h5><b class="ch-pru" title="Rappel de prudence après la réponse">⚠ prudence</b></div><ul class="ch-ex"><li>voiture</li><li>véhicule</li><li>automobile</li><li>camion</li><li>bus</li></ul><p class="ch-lg"><span>EN</span>car<span>AR</span><bdi dir="rtl" lang="ar">سيارة</bdi></p><code class="ch-key">vehicule</code></article><article class="ch-f"><div class="ch-f-top"><h5>Les animaux</h5><b class="ch-pru" title="Rappel de prudence après la réponse">⚠ prudence</b></div><ul class="ch-ex"><li>animal</li><li>chien</li><li>chat</li><li>oiseau</li></ul><p class="ch-lg"><span>EN</span>animal<span>AR</span><bdi dir="rtl" lang="ar">حيوان</bdi></p><code class="ch-key">animal</code></article><article class="ch-f"><div class="ch-f-top"><h5>L'objet devant vous</h5></div><ul class="ch-ex"><li>objet</li><li>objets</li><li>chose</li><li>c'est quoi</li><li>qu'est-ce que c'est</li></ul><p class="ch-lg"><span>EN</span>object<span>AR</span><bdi dir="rtl" lang="ar">شيء</bdi></p><code class="ch-key">objet</code></article></div></div>
+<div class="dg ch-grp" style="--c:var(--c3)"><h4 class="dg-h"><em>1 champ</em><span>Description générale</span><small>quand on veut tout savoir</small></h4><div class="ch-grid"><article class="ch-f"><div class="ch-f-top"><h5>La description de la scène</h5></div><ul class="ch-ex"><li>décris</li><li>décrire</li><li>description</li><li>qu'est-ce que tu vois</li><li>que vois-tu</li></ul><p class="ch-lg"><span>EN</span>describe<span>AR</span><bdi dir="rtl" lang="ar">صف</bdi></p><code class="ch-key">description</code></article></div></div>
+
+        <div class="use-note" data-label="Remarque"><p>Vous n'avez pas besoin d'apprendre ces mots par cœur : une phrase naturelle suffit (« où est la sortie ? »). Si l'assistant n'annonce pas le champ attendu, reformulez avec un mot de la liste ; si rien n'est reconnu, il décrit la scène entière.</p></div>
+      </section>
+
+      <div class="use-end">
+        <a class="back-link" href="#guide">← Retour au Guide</a>
+        <a class="back-link" href="#composants">Composants du dispositif →</a>
+      </div>
+    </section>
+
+    <!-- GPS : « Centre de contrôle satellite » (styles : gps-wow.css · logique : gps-wow.js)
+         Les identifiants (#map, #status, #demoBtn, #vLat, #vSpeed, #batBar…) sont ceux utilisés par app.js : ne pas les renommer. -->
+    <section id="gps" class="view" data-live="0">
+      <div class="gps-hero reveal">
+        <div class="gps-orbit" aria-hidden="true">
+          <span class="o o1"><i></i></span><span class="o o2"><i></i></span><span class="o o3"><i></i></span>
+          <b class="globe"><u></u></b>
+        </div>
+        <div class="gps-hero-txt">
+          <p class="eyebrow">Suivi · Temps réel · Carte</p>
+          <h2 class="title"><span class="grad">Suivi GPS</span></h2>
+          <p class="lead" id="gpsLead">Position en direct de l'utilisateur.</p>
+        </div>
+        <div class="chips">
+          <span id="status" class="chip off"><i></i><b>Hors ligne</b></span>
+          <button id="demoBtn" class="ghost">Mode démo</button>
+        </div>
+      </div>
+
+      <div class="gps-grid">
+        <div class="map-wrap glass reveal">
+          <div class="map-stage">
+            <div id="map"></div>
+            <div class="hud" aria-hidden="true">
+              <i class="hud-grid"></i><i class="hud-vig"></i><i class="hud-scan"></i>
+              <i class="br tl"></i><i class="br tr"></i><i class="br bl"></i><i class="br bb"></i>
+              <div class="hud-tag"><i></i><b></b><span id="hudCoord">— · —</span></div>
+              <div class="hud-compass" id="hudCompass">
+                <svg viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="44" fill="rgba(4,8,22,.75)" stroke="rgba(0,229,255,.55)" stroke-width="1.5"/>
+                  <circle cx="50" cy="50" r="35" fill="none" stroke="rgba(0,229,255,.28)" stroke-dasharray="2 5"/>
+                  <g fill="#00e5ff" font-family="Space Grotesk,sans-serif" font-size="9" font-weight="700" text-anchor="middle">
+                    <text x="50" y="17">N</text><text x="85" y="53.5">E</text><text x="50" y="91">S</text><text x="15" y="53.5">O</text>
+                  </g>
+                  <g id="needle"><path d="M50 21 L57 50 L43 50Z" fill="#ff3d9a"/><path d="M50 79 L57 50 L43 50Z" fill="#00e5ff" opacity=".55"/></g>
+                  <circle cx="50" cy="50" r="4.5" fill="#fff"/>
+                </svg>
+                <em id="hudDir">Cap —</em>
+              </div>
+            </div>
+          </div>
+          <div class="map-actions">
+            <button id="centerBtn" class="ghost">Centrer</button>
+            <button id="trailBtn" class="ghost">Masquer le trajet</button>
+            <a id="gmapsBtn" class="ghost" target="_blank" rel="noopener">Ouvrir dans Google Maps ↗</a>
+          </div>
+        </div>
+
+        <aside class="panel glass reveal">
+          <div class="p-head"><h3>Télémétrie</h3><span class="p-sub">Direct · Téléphone</span></div>
+
+          <div class="addr">
+            <span class="addr-pin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg></span>
+            <div class="addr-txt">
+              <span class="muted small">Lieu actuel (approximatif)</span>
+              <strong id="vStreet">—</strong>
+              <span id="vDistrict" class="muted small"></span>
+            </div>
+          </div>
+
+          <div class="gauges">
+            <div class="gauge g-speed">
+              <svg viewBox="0 0 120 80" aria-hidden="true">
+                <defs><linearGradient id="gSpd" gradientUnits="userSpaceOnUse" x1="10" y1="0" x2="110" y2="0"><stop offset="0" stop-color="#00e5ff"/><stop offset=".55" stop-color="#7c4dff"/><stop offset="1" stop-color="#ff3d9a"/></linearGradient></defs>
+                <path class="g-track" d="M10 70 A50 50 0 0 1 110 70"/>
+                <path id="spArc" class="g-fill" d="M10 70 A50 50 0 0 1 110 70"/>
+                <g id="spDot"><circle cx="10" cy="70" r="5.5" fill="#fff"/></g>
+                <text class="g-tick" x="10" y="80" text-anchor="middle">0</text>
+                <text class="g-tick" id="spMax" x="110" y="80" text-anchor="middle">12</text>
+              </svg>
+              <div class="g-val"><strong id="vSpeed">—</strong><small>Vitesse</small></div>
+            </div>
+            <div class="gauge g-bat">
+              <svg viewBox="0 0 100 100" aria-hidden="true">
+                <circle class="g-track" cx="50" cy="50" r="42"/>
+                <circle id="batArc" class="g-fill" cx="50" cy="50" r="42"/>
+              </svg>
+              <div class="g-val"><strong id="vBat">—</strong><small>Batterie</small></div>
+            </div>
+          </div>
+          <div class="bar"><i id="batBar"></i></div>
+
+          <dl class="tiles">
+            <div class="tile"><dt>Latitude</dt><dd id="vLat">—</dd></div>
+            <div class="tile"><dt>Longitude</dt><dd id="vLng">—</dd></div>
+            <div class="tile"><dt>Altitude</dt><dd id="vAlt">—</dd></div>
+            <div class="tile" id="tileAcc" data-lv="0"><dt>Précision</dt><dd id="vAcc">—</dd><span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>
+            <div class="tile wide"><dt>Distance parcourue (session)</dt><dd id="vDist">0 m</dd></div>
+            <div class="tile wide"><dt>Dernière mise à jour</dt><dd id="vAgo">—</dd>
+              <div class="ecg-box" aria-hidden="true"><svg viewBox="0 0 400 30" preserveAspectRatio="none"><path d="M0 15H34L40 15L46 6L52 25L58 1L64 17L68 15H96L102 12L110 15H200M200 15H234L240 15L246 6L252 25L258 1L264 17L268 15H296L302 12L310 15H400"/></svg></div>
+            </div>
+          </dl>
+          <p class="muted small">Les données arrivent en direct du téléphone (Traccar Client).</p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- CONTACT (styles : contact-wow.css · logique : contact-wow.js)
+         Les noms de champs (name, email, message) et les identifiants #contactForm / #contactMsg sont utilisés par app.js. -->
+    <section id="contact" class="view">
+      <div class="ct-hero reveal">
+        <div class="ct-hero-txt">
+          <p class="eyebrow">Nous écrire</p>
+          <h2 class="title"><span class="grad">Contact</span></h2>
+          <p class="lead">Une question, un code à demander, un souci technique ? Écrivez-nous.</p>
+        </div>
+        <div class="ct-orb" aria-hidden="true">
+          <span></span><span></span><span></span>
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3.5 7.5 12 13l8.5-5.5"/></svg>
+        </div>
+      </div>
+
+      <div class="ct-grid">
+        <div class="ct-card glass reveal" id="ctCard">
+          <div class="ct-topics" role="group" aria-label="Sujet rapide">
+            <button type="button" data-t="Bonjour, je rencontre un problème technique : ">Problème technique</button>
+            <button type="button" data-t="Bonjour, j'ai une question sur le guide d'utilisation : ">Question sur le guide</button>
+            <button type="button" data-t="Bonjour, ">Autre</button>
+          </div>
+
+          <form id="contactForm" class="ct-form">
+            <div class="ct-row">
+              <label class="cf"><input name="name" required placeholder=" " autocomplete="name"><span>Nom</span><i></i></label>
+              <label class="cf"><input name="email" type="email" required placeholder=" " autocomplete="email"><span>E-mail</span><i></i></label>
+            </div>
+            <label class="cf"><textarea name="message" rows="6" required maxlength="2000" placeholder=" "></textarea><span>Message</span><i></i><em class="cf-count"><b>0</b>/2000</em></label>
+            <div class="ct-send">
+              <button class="btn ct-btn" type="submit"><span>Envoyer</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 2.5 2.8 10.1c-.8.3-.8 1.4 0 1.7l5.6 2.2 2.2 5.6c.3.8 1.4.8 1.7 0L21.5 2.5z"/></svg><i class="shine"></i></button>
+              <p id="contactMsg" class="muted" role="status"></p>
+            </div>
+          </form>
+
+          <div class="ct-done" aria-live="polite">
+            <svg class="ct-check" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="23"/><path d="M15 27l8 8 15-17"/></svg>
+            <h4 class="grad">Message envoyé</h4>
+            <p>Merci, nous vous répondrons par e-mail.</p>
+            <button type="button" class="ghost" id="ctAgain">Écrire un autre message</button>
+          </div>
+        </div>
+
+        <!-- À PERSONNALISER : remplacez les coordonnées ci-dessous (texte ET data-copy) par celles de votre structure. -->
+        <div class="ct-side reveal">
+          <div class="ct-ch glass">
+            <i class="ct-spot"></i>
+            <a class="ct-link" href="mailto:nnirmeca@productique-mecatronique.com">
+              <span class="ct-ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3.5 7.5 12 13l8.5-5.5"/></svg></span>
+              <span><small>E-mail</small><b>nnirmeca@productique-mecatronique.com</b></span>
+            </a>
+            <button type="button" class="ct-copy" data-copy="nnirmeca@productique-mecatronique.com" aria-label="Copier l'adresse e-mail"><svg class="no" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"/></svg><svg class="yes" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+          </div>
+          <div class="ct-ch glass">
+            <i class="ct-spot"></i>
+            <a class="ct-link" href="tel:+0622345678">
+              <span class="ct-ico"><svg viewBox="0 0 24 24"><path d="M5 4h3.5l1.6 4.2-2.2 1.4a11 11 0 0 0 5.5 5.5l1.4-2.2L19 14.5V18a2 2 0 0 1-2 2A13 13 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></span>
+              <span><small>Téléphone</small><b>+06 22 34 56 78<br>+05 11 38 90 44</b></span>
+            </a>
+            <button type="button" class="ct-copy" data-copy="+06 22 34 56 78 / +05 11 38 90 44" aria-label="Copier le numéro de téléphone"><svg class="no" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"/></svg><svg class="yes" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+          </div>
+          <div class="ct-ch glass">
+            <i class="ct-spot"></i>
+            <div class="ct-link">
+              <span class="ct-ico"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
+              <span><small>Adresse</small><b>Département mécanique.<br>FST Beni Mellal</b></span>
+            </div>
+            <button type="button" class="ct-copy" data-copy="Département mécanique. FST Beni Mellal" aria-label="Copier l'adresse postale"><svg class="no" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"/></svg><svg class="yes" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+          </div>
+          <div class="ct-ch glass">
+            <i class="ct-spot"></i>
+            <a class="ct-link" href="https://www.nnirmeca.com" target="_blank" rel="noopener">
+              <span class="ct-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg></span>
+              <span><small>Site web</small><b>www.nnirmeca.com</b></span>
+            </a>
+            <button type="button" class="ct-copy" data-copy="www.nnirmeca.com" aria-label="Copier l'adresse du site web"><svg class="no" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"/></svg><svg class="yes" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>© <span id="year"></span> VisionGuide · Fait avec ❤ pour l'autonomie de tous</footer>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="composants.js"></script>
+<script src="fiches-wow.js"></script>
+<script src="utilisation.js"></script>
+<script src="langue.js"></script>
+<script src="delais-wow.js"></script>
+<script src="champs-wow.js"></script>
+<script src="gps-wow.js"></script>
+<script src="contact-wow.js"></script>
+<script src="home-wow.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

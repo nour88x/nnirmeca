@@ -1,0 +1,203 @@
+/* =====================================================================================
+   VisionGuide maj24 — Guide › 02 · Étape 5 : les quatre boutons animés
+   Fichier AJOUTÉ (chargé après les autres feuilles de style). Tout est limité à #utilisation / #langue.
+   Côtés pris par rapport au MALVOYANT qui porte le dispositif : sa droite est à GAUCHE de l'écran,
+   sa gauche est à DROITE de l'écran.
+     écran haut-droite  = haut gauche du malvoyant   → marche / arrêt de tout le système
+     écran haut-gauche  = haut droite du malvoyant   → active le modèle d'IA
+     écran bas-droite   = bas gauche du malvoyant    → enregistre la voix à chaque clic
+     écran bas-gauche   = bas droite du malvoyant    → change la langue à chaque clic
+   Cycle de 16 s, dans l'ordre des étapes (4 s par bouton) :
+     0 – 4 s   marche / arrêt      (étape 1)
+     4 – 8 s   appel de l'IA       (étape 2)
+     8 – 12 s  enregistrement de la voix, puis analyse et retour vocal (étape 3)
+     12 – 16 s langue FR → EN → AR (à tout moment)
+   ===================================================================================== */
+#utilisation .v-btns{display:grid;grid-template-columns:minmax(0,1fr);place-items:center;min-height:380px;padding:1.2rem .8rem;overflow:hidden}
+#utilisation .v-btns .vb-board{
+  --T:16s;
+  position:relative;width:min(100%,430px);aspect-ratio:100/106;isolation:isolate;margin-bottom:1.6rem;
+}
+/* clin d'œil à la plaque d'essai : fine grille de trous */
+#utilisation .vb-board::before{content:'';position:absolute;inset:-2%;z-index:-1;
+  background:radial-gradient(rgba(255,255,255,.2) 1.1px,transparent 1.7px) 0 0/16px 16px;
+  -webkit-mask:radial-gradient(closest-side,#000 30%,transparent 100%);mask:radial-gradient(closest-side,#000 30%,transparent 100%);opacity:.55}
+
+/* ---------- Positions (à l'écran) ---------- */
+#utilisation .vb-it{position:absolute;width:22%;transform:translate(-50%,0)}
+#utilisation .vb-pow{--k:#5fe0aa;--kd:#04281a;left:80%;top:9.4%}
+#utilisation .vb-ai{--k:#9b7bff;--kd:#1b1050;left:20%;top:9.4%}
+#utilisation .vb-rec{--k:#ff3d9a;--kd:#3a0720;left:80%;top:55.7%}
+#utilisation .vb-lang{--k:#00e5ff;--kd:#04121a;left:20%;top:55.7%}
+
+/* ---------- Boutons ---------- */
+#utilisation .vb-btn{position:relative;display:grid;place-items:center;width:100%;aspect-ratio:1;border-radius:50%;
+  border:2px solid rgba(255,255,255,.5);
+  background:radial-gradient(circle at 35% 30%,#fff 0,var(--k) 42%,var(--kd) 135%);
+  box-shadow:0 0 0 rgba(0,0,0,0),0 10px 24px rgba(0,0,0,.5),inset 0 -7px 16px rgba(0,0,0,.35);
+  filter:brightness(.55) saturate(.35);z-index:2;
+  animation:vbOn var(--T) ease-in-out infinite}
+#utilisation .vb-ai .vb-btn{animation-delay:4s}
+#utilisation .vb-rec .vb-btn{animation-delay:8s}
+#utilisation .vb-lang .vb-btn{animation-name:vbOnLang;animation-delay:12s}
+#utilisation .vb-btn svg{width:44%;height:44%;fill:none;stroke:#0a0a18;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;position:relative}
+@keyframes vbOn{
+  0%{transform:scale(1);filter:brightness(.55) saturate(.35);box-shadow:0 0 0 var(--k),0 10px 24px rgba(0,0,0,.5),inset 0 -7px 16px rgba(0,0,0,.35)}
+  1.5%{transform:scale(.84);filter:brightness(1.15) saturate(1.1);box-shadow:0 0 16px var(--k),0 3px 8px rgba(0,0,0,.5),inset 0 -2px 8px rgba(0,0,0,.45)}
+  4.5%{transform:scale(1.07);filter:brightness(1.1) saturate(1.1);box-shadow:0 0 70px var(--k),0 10px 24px rgba(0,0,0,.5),inset 0 -7px 16px rgba(0,0,0,.35)}
+  7.5%,21%{transform:scale(1);filter:none;box-shadow:0 0 38px var(--k),0 10px 24px rgba(0,0,0,.5),inset 0 -7px 16px rgba(0,0,0,.35)}
+  25%,100%{transform:scale(1);filter:brightness(.55) saturate(.35);box-shadow:0 0 0 var(--k),0 10px 24px rgba(0,0,0,.5),inset 0 -7px 16px rgba(0,0,0,.35)}
+}
+/* bouton de langue : un appui par langue */
+@keyframes vbOnLang{
+  0%{transform:scale(1);filter:brightness(.55) saturate(.35);box-shadow:0 0 0 var(--k),0 10px 24px rgba(0,0,0,.5),inset 0 -7px 16px rgba(0,0,0,.35)}
+  1.5%,9%,16.5%{transform:scale(.84);filter:brightness(1.15) saturate(1.1);box-shadow:0 0 16px var(--k),0 3px 8px rgba(0,0,0,.5),inset 0 -2px 8px rgba(0,0,0,.45)}
+  3.7%,7.5%,11.2%,15%,18.7%,22.5%{transform:scale(1.04);filter:none;box-shadow:0 0 46px var(--k),0 10px 24px rgba(0,0,0,.5),inset 0 -7px 16px rgba(0,0,0,.35)}
+  25%,100%{transform:scale(1);filter:brightness(.55) saturate(.35);box-shadow:0 0 0 var(--k),0 10px 24px rgba(0,0,0,.5),inset 0 -7px 16px rgba(0,0,0,.35)}
+}
+
+/* ondes qui partent du bouton */
+#utilisation .vb-ring{position:absolute;inset:-3px;border-radius:50%;border:2px solid var(--k);opacity:0;pointer-events:none;animation:vbRing var(--T) ease-out infinite}
+#utilisation .vb-pow .vb-ring:nth-of-type(1){animation-delay:.2s}
+#utilisation .vb-pow .vb-ring:nth-of-type(2){animation-delay:.9s}
+#utilisation .vb-ai .vb-ring:nth-of-type(1){animation-delay:4.2s}
+#utilisation .vb-ai .vb-ring:nth-of-type(2){animation-delay:4.9s}
+#utilisation .vb-rec .vb-ring:nth-of-type(1){animation-delay:8.2s}
+#utilisation .vb-rec .vb-ring:nth-of-type(2){animation-delay:8.9s}
+#utilisation .vb-lang .vb-ring:nth-of-type(1){animation-delay:12.24s}
+#utilisation .vb-lang .vb-ring:nth-of-type(2){animation-delay:13.44s}
+#utilisation .vb-lang .vb-ring:nth-of-type(3){animation-delay:14.64s}
+@keyframes vbRing{0%{opacity:0;transform:scale(1)}1.2%{opacity:.95}8%{opacity:0;transform:scale(1.85)}100%{opacity:0;transform:scale(1.85)}}
+
+/* numéros d'ordre : seuls les trois premiers boutons forment une séquence */
+#utilisation .vb-n{position:absolute;left:-6%;top:-6%;z-index:3;width:1.5rem;height:1.5rem;border-radius:50%;display:grid;place-items:center;
+  font:800 .78rem 'Space Grotesk',sans-serif;color:#0a0a18;background:#fff;box-shadow:0 0 14px var(--k)}
+
+/* ---------- Haut gauche du malvoyant : marche / arrêt ---------- */
+#utilisation .vb-pow .vb-btn svg{animation:vbPow var(--T) ease-in-out infinite}
+@keyframes vbPow{0%,1%{transform:scale(1) rotate(0)}4%{transform:scale(1.2) rotate(-12deg)}7%,21%{transform:scale(1.1) rotate(0)}25%,100%{transform:scale(1) rotate(0)}}
+#utilisation .vb-pl{stroke-dasharray:9;animation:vbPl var(--T) ease-in-out infinite}
+@keyframes vbPl{0%{stroke-dashoffset:9}3%,100%{stroke-dashoffset:0}}
+#utilisation .vb-boot{position:absolute;inset:-12%;border-radius:50%;border:2px dashed var(--k);opacity:0;pointer-events:none;animation:vbShowP var(--T) ease-in-out infinite,vbSpin 5s linear infinite}
+@keyframes vbShowP{0%{opacity:0}2%,21%{opacity:.85}25%,100%{opacity:0}}
+#utilisation .vb-sw{position:absolute;left:50%;bottom:calc(100% + 8px);transform:translate(-50%,0);z-index:3;display:grid;place-items:center;
+  min-width:4.6rem;padding:.2rem .8rem;border-radius:999px;background:rgba(4,40,26,.9);border:1px solid var(--k);box-shadow:0 0 22px rgba(95,224,170,.55);
+  font:800 .7rem 'Space Grotesk',sans-serif;letter-spacing:.12em;opacity:0;animation:vbSw var(--T) ease-in-out infinite}
+#utilisation .vb-sw em{grid-area:1/1;font-style:normal;color:#e8fff5}
+#utilisation .vb-sw .off{color:#9fb5aa;animation:vbSwOff var(--T) ease-in-out infinite}
+#utilisation .vb-sw .on{animation:vbSwOn var(--T) ease-in-out infinite}
+@keyframes vbSw{0%{opacity:0;transform:translate(-50%,6px)}1%,22%{opacity:1;transform:translate(-50%,0)}25%,100%{opacity:0;transform:translate(-50%,-6px)}}
+@keyframes vbSwOff{0%,1.5%{opacity:1}3%,100%{opacity:0}}
+@keyframes vbSwOn{0%,1.5%{opacity:0;transform:scale(.8)}3.5%{opacity:1;transform:scale(1.15)}6%,100%{opacity:1;transform:scale(1)}}
+
+/* ---------- Haut droite du malvoyant : IA ---------- */
+#utilisation .vb-ai .vb-star{fill:#0a0a18;stroke:none;transform-box:fill-box;transform-origin:center;animation:vbStar var(--T) ease-in-out infinite;animation-delay:4s}
+#utilisation .vb-ai .vb-star2{stroke-width:1.6;transform-box:fill-box;transform-origin:center;animation:vbTwinkle 1.2s ease-in-out infinite}
+@keyframes vbStar{0%,2%{transform:scale(1) rotate(0)}9%{transform:scale(1.18) rotate(90deg)}16%{transform:scale(.95) rotate(180deg)}25%,100%{transform:scale(1) rotate(180deg)}}
+@keyframes vbTwinkle{50%{transform:scale(.45) rotate(45deg);opacity:.4}}
+#utilisation .vb-orbit{position:absolute;inset:-26%;border-radius:50%;opacity:0;animation:vbShowA var(--T) ease-in-out infinite,vbSpin 2.6s linear infinite;animation-delay:4s,0s}
+#utilisation .vb-orbit i{position:absolute;left:50%;top:0;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:#e3d8ff;box-shadow:0 0 12px 3px #9b7bff}
+#utilisation .vb-orbit i:nth-child(2){top:auto;bottom:6%;left:12%;width:5px;height:5px}
+#utilisation .vb-orbit i:nth-child(3){top:auto;bottom:6%;left:auto;right:12%;width:5px;height:5px;background:#ffd0ee;box-shadow:0 0 12px 3px #ff3d9a}
+@keyframes vbSpin{to{transform:rotate(360deg)}}
+@keyframes vbShowA{0%{opacity:0}3%,21%{opacity:1}25%,100%{opacity:0}}
+
+/* fils d'énergie : marche → IA, puis IA → enregistrement */
+#utilisation .vb-link{position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:visible;pointer-events:none}
+#utilisation .vb-link path{fill:none;stroke-linecap:round;vector-effect:non-scaling-stroke}
+#utilisation .vb-rail{stroke:rgba(255,255,255,.16);stroke-width:2;stroke-dasharray:2 7}
+#utilisation .vb-flow{stroke:url(#vbG);stroke-width:4;stroke-dasharray:16 120;stroke-dashoffset:16;opacity:0;filter:drop-shadow(0 0 6px #c07bff);animation:vbFlow var(--T) ease-in-out infinite}
+#utilisation .vb-flow2{animation-delay:4s}
+@keyframes vbFlow{0%,18%{stroke-dashoffset:16;opacity:0}20%{opacity:1}28%{stroke-dashoffset:-100;opacity:1}30%,100%{stroke-dashoffset:-100;opacity:0}}
+
+/* ---------- Bas gauche du malvoyant : enregistrement, analyse, retour vocal ---------- */
+#utilisation .vb-wave{position:absolute;inset:0;z-index:0;opacity:0;pointer-events:none;animation:vbShowW var(--T) ease-in-out infinite,vbHue var(--T) ease-in-out infinite;animation-delay:8s}
+#utilisation .vb-wave i{position:absolute;left:50%;top:0;width:0;height:100%;transform:rotate(var(--a))}
+#utilisation .vb-wave i::before{content:'';position:absolute;left:-1.5px;bottom:calc(100% + 6px);width:3px;height:15%;border-radius:99px;transform-origin:50% 100%;
+  background:linear-gradient(0deg,#8a1a55,#ff3d9a 55%,#ffb1da);box-shadow:0 0 10px rgba(255,61,154,.7);animation:vbBar .7s ease-in-out infinite alternate}
+#utilisation .vb-wave i:nth-child(3n)::before{animation-duration:.55s}
+#utilisation .vb-wave i:nth-child(4n+1)::before{animation-duration:.9s;animation-delay:-.3s}
+#utilisation .vb-wave i:nth-child(5n+2)::before{animation-duration:.62s;animation-delay:-.5s}
+#utilisation .vb-wave i:nth-child(2n)::before{animation-delay:-.2s}
+#utilisation .vb-wave i:nth-child(n+12):nth-child(-n+14){display:none}
+@keyframes vbBar{from{transform:scaleY(.3)}to{transform:scaleY(1.9)}}
+@keyframes vbShowW{0%,1%{opacity:0}3%,21%{opacity:1}25%,100%{opacity:0}}
+/* 1re moitié : enregistrement (rose) ; 2e moitié : l'IA analyse (violet) */
+@keyframes vbHue{0%,12%{filter:none}14%,100%{filter:hue-rotate(-62deg) saturate(1.2)}}
+#utilisation .vb-recdot{position:absolute;left:50%;top:-44%;margin-left:-1.9rem;z-index:3;display:flex;align-items:center;gap:.3rem;padding:.12rem .5rem;border-radius:999px;font:800 .62rem 'Space Grotesk',sans-serif;font-style:normal;letter-spacing:.12em;color:#fff;background:rgba(58,7,32,.92);border:1px solid #ff3d9a;box-shadow:0 0 16px rgba(255,61,154,.7);opacity:0;animation:vbShowR var(--T) ease-in-out infinite;animation-delay:8s}
+@keyframes vbShowR{0%,1%{opacity:0}3%,11%{opacity:1}13%,100%{opacity:0}}
+#utilisation .vb-recdot u{width:8px;height:8px;border-radius:50%;background:#ff3b3b;box-shadow:0 0 10px #ff3b3b;animation:vbBlink .8s steps(2,jump-none) infinite}
+@keyframes vbBlink{50%{opacity:.15}}
+#utilisation .vb-rec .vb-btn svg{animation:vbMic var(--T) ease-in-out infinite;animation-delay:8s}
+@keyframes vbMic{0%,1.5%{transform:scale(1)}4.5%,21%{transform:scale(1.14)}25%,100%{transform:scale(1)}}
+
+/* ---------- Bas droite du malvoyant : langue ---------- */
+#utilisation .vb-mer{transform-box:fill-box;transform-origin:center;animation:vbMer 1.2s ease-in-out infinite}
+@keyframes vbMer{50%{transform:scaleX(.15)}}
+#utilisation .vb-codes{position:absolute;left:50%;bottom:calc(100% + 10px);width:0;height:0;z-index:3}
+#utilisation .vb-codes em{position:absolute;left:0;bottom:0;transform:translate(-50%,8px);padding:.18rem .85rem;border-radius:999px;font:800 1.05rem 'Space Grotesk',sans-serif;font-style:normal;letter-spacing:.08em;color:#0a0a18;background:var(--c);box-shadow:0 0 26px var(--c);opacity:0;animation:vbCode var(--T) ease-in-out infinite}
+#utilisation .vb-codes .c1{--c:#00e5ff;animation-delay:12s}
+#utilisation .vb-codes .c2{--c:#a68bff;animation-delay:13.2s}
+#utilisation .vb-codes .c3{--c:#ff5fae;animation-delay:14.4s}
+@keyframes vbCode{0%{opacity:0;transform:translate(-50%,10px) scale(.8)}1.2%{opacity:1;transform:translate(-50%,0) scale(1.15)}2.6%,6.5%{opacity:1;transform:translate(-50%,0) scale(1)}8%,100%{opacity:0;transform:translate(-50%,-8px) scale(.9)}}
+
+/* ---------- Légendes ---------- */
+#utilisation .vb-lab{position:absolute;left:50%;top:calc(100% + 9px);width:150%;transform:translateX(-50%);display:grid;justify-items:center;text-align:center;line-height:1.2;opacity:.42;animation:vbLab var(--T) ease-in-out infinite}
+#utilisation .vb-ai .vb-lab{animation-delay:4s}
+#utilisation .vb-rec .vb-lab{animation-delay:8s}
+#utilisation .vb-lang .vb-lab{animation-delay:12s}
+#utilisation .vb-lab b{font:700 .82rem 'Space Grotesk',sans-serif;color:var(--k);white-space:nowrap}
+#utilisation .vb-lab small{font-size:.66rem;color:var(--muted);white-space:nowrap}
+@keyframes vbLab{0%{opacity:.42}2.5%,22%{opacity:1}25%,100%{opacity:.42}}
+
+/* ---------- Phrase d'état ---------- */
+#utilisation .vb-stat{position:absolute;left:0;right:0;bottom:0;height:2.1rem;z-index:3}
+#utilisation .vb-stat span{position:absolute;left:50%;bottom:0;transform:translate(-50%,8px);padding:.4rem 1rem;border-radius:999px;white-space:nowrap;font-weight:600;font-size:.84rem;color:#fff;background:rgba(10,6,24,.82);border:1px solid var(--k);box-shadow:0 0 22px var(--k);opacity:0;animation:vbStat var(--T) ease-in-out infinite}
+#utilisation .vb-stat .s0{--k:#5fe0aa}
+#utilisation .vb-stat .s1{--k:#9b7bff;animation-delay:4s}
+#utilisation .vb-stat .s2{--k:#ff3d9a;animation-delay:8s;animation-name:vbStatShort}
+#utilisation .vb-stat .s4{--k:#b07bff;animation-delay:10s;animation-name:vbStatShort}
+#utilisation .vb-stat .s3{--k:#00e5ff;animation-delay:12s}
+@keyframes vbStat{0%{opacity:0;transform:translate(-50%,8px)}2.5%,21%{opacity:1;transform:translate(-50%,0)}25%,100%{opacity:0;transform:translate(-50%,-6px)}}
+@keyframes vbStatShort{0%{opacity:0;transform:translate(-50%,8px)}2.5%,10%{opacity:1;transform:translate(-50%,0)}12.5%,100%{opacity:0;transform:translate(-50%,-6px)}}
+
+/* ---------- Repère : gauche / droite sont ceux du malvoyant ---------- */
+#utilisation .vb-side{position:absolute;left:50%;top:100%;transform:translateX(-50%);white-space:nowrap;margin:.55rem 0 0;padding:.18rem .6rem;border-radius:999px;font-size:.64rem;font-weight:600;letter-spacing:.04em;color:var(--muted);background:rgba(10,6,24,.6);border:1px solid rgba(255,255,255,.14);z-index:3}
+
+/* ---------- Section « Langue » : lignes de la simulation ---------- */
+#langue .lg-btn.lg-mid{background:radial-gradient(circle at 35% 30%,#6a4a66,#2a1a2c 70%);border-color:rgba(255,61,154,.35)}
+#langue .lg-btn.lg-pow{background:radial-gradient(circle at 35% 30%,#3f6a58,#14281f 70%);border-color:rgba(95,224,170,.35)}
+
+/* ---------- Petits écrans ---------- */
+@media(max-width:520px){
+  #utilisation .v-btns{min-height:340px;padding:1rem .4rem}
+  #utilisation .vb-lab b{font-size:.72rem}
+  #utilisation .vb-lab small{font-size:.58rem;white-space:normal}
+  #utilisation .vb-stat span{font-size:.74rem;padding:.35rem .75rem}
+  #utilisation .vb-recdot{top:-48%}
+  #utilisation .v-btns .vb-board{margin-bottom:4.6rem}
+  #utilisation .vb-stat{bottom:-2.9rem}
+  #utilisation .vb-side{top:calc(100% + 2.6rem)}
+}
+
+/* ---------- Mouvement réduit : les quatre boutons restent visibles, allumés et légendés ---------- */
+@media(prefers-reduced-motion:reduce){
+  #utilisation .vb-btn{filter:none;box-shadow:0 0 26px var(--k),0 10px 24px rgba(0,0,0,.5)}
+  #utilisation .vb-lab{opacity:1}
+  #utilisation .vb-codes .c1{opacity:1;transform:translate(-50%,0)}
+  #utilisation .vb-sw{opacity:1}
+  #utilisation .vb-sw .off{opacity:0}
+  #utilisation .vb-sw .on{opacity:1}
+  #utilisation .vb-recdot{opacity:1}
+  #utilisation .vb-wave,#utilisation .vb-flow,#utilisation .vb-orbit,#utilisation .vb-boot,#utilisation .vb-stat{display:none}
+}
+
+/* ---------- Étape 1 : alimentation puis bouton poussoir de marche / arrêt ---------- */
+#utilisation .use-hp .pw-target{left:21.8%;top:54.4%;width:17%}
+/* sous-étapes du casque : désormais étape 3 */
+#utilisation .use-sub li::before{content:'3.' counter(s)}
+
+/* ---------- Étape 2 : bouton poussoir de marche / arrêt ---------- */
+#utilisation .use-hp .pb-target{left:45.3%;top:49.5%;width:50%}
+#utilisation .pb-cap{position:absolute;left:45.3%;top:49.5%;width:25.5%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;z-index:4;pointer-events:none;background:radial-gradient(circle,rgba(57,255,136,.45),rgba(57,255,136,0) 72%);box-shadow:0 0 0 2px rgba(57,255,136,.65),0 0 26px rgba(57,255,136,.7);animation:pbPress 1.8s ease-in-out infinite}
+@keyframes pbPress{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.35}40%{transform:translate(-50%,-50%) scale(.86);opacity:1}60%{transform:translate(-50%,-50%) scale(.86);opacity:1}}

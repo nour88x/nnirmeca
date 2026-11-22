@@ -1,0 +1,90 @@
+/* =====================================================================================
+   VisionGuide maj24 — Onglet Contact (version sobre et cohérente avec le reste du site)
+   Fichier AJOUTÉ. Tout est limité à #contact. Reprend les couleurs, les cartes « glass »,
+   les anneaux « radar » et les boutons déjà utilisés ailleurs dans le site.
+   ===================================================================================== */
+
+/* ---------- En-tête : titre + orbe courrier (même motif que l'écran de connexion) ---------- */
+.ct-hero{display:flex;align-items:center;justify-content:space-between;gap:1.5rem}
+.ct-orb{position:relative;flex:none;display:grid;place-items:center;width:104px;height:104px;margin-right:clamp(0px,4vw,60px);border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--c2),#1b1442);box-shadow:0 0 50px rgba(124,77,255,.55);animation:float 4s ease-in-out infinite}
+.ct-orb span{position:absolute;inset:0;border-radius:50%;border:2px solid var(--c1);opacity:0;animation:ping 2.6s infinite}
+.ct-orb span:nth-child(2){animation-delay:.8s;border-color:var(--c2)}
+.ct-orb span:nth-child(3){animation-delay:1.6s;border-color:var(--c3)}
+.ct-orb svg{width:42px;height:42px;fill:none;stroke:#fff;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- Grille ---------- */
+.ct-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:1rem;align-items:start}
+
+/* ---------- Carte du formulaire ---------- */
+.ct-card{position:relative;overflow:hidden;padding:clamp(1.3rem,3vw,2rem);transition:border-color .4s,box-shadow .4s}
+.ct-card:focus-within{border-color:rgba(0,229,255,.5);box-shadow:0 0 0 1px rgba(0,229,255,.25),0 16px 60px rgba(124,77,255,.28)}
+.ct-topics{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.3rem}
+.ct-topics button{padding:.48rem .95rem;border-radius:999px;border:1px solid var(--line);background:var(--glass);color:var(--muted);font:500 .86rem 'Outfit',sans-serif;cursor:pointer;transition:.25s}
+.ct-topics button:hover,.ct-topics button:focus-visible{outline:none;color:var(--c1);border-color:var(--c1)}
+.ct-topics button.on{color:#05060f;font-weight:600;border-color:transparent;background:linear-gradient(90deg,var(--c1),var(--c2))}
+
+/* ---------- Champs à étiquette flottante ---------- */
+.ct-form{display:grid;gap:.95rem}
+.ct-row{display:grid;grid-template-columns:1fr 1fr;gap:.95rem}
+#contact .cf{position:relative;display:block;margin:0}
+#contact .cf input,#contact .cf textarea{display:block;margin:0;padding:1.55rem 1rem .6rem}
+#contact .cf textarea{min-height:170px;resize:vertical;padding-bottom:1.8rem}
+#contact .cf span{position:absolute;left:1rem;top:1.05rem;color:var(--muted);pointer-events:none;transition:.25s}
+#contact .cf input:focus+span,#contact .cf input:not(:placeholder-shown)+span,
+#contact .cf textarea:focus+span,#contact .cf textarea:not(:placeholder-shown)+span{top:.42rem;font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--c1)}
+#contact .cf i{position:absolute;left:16px;right:16px;bottom:1px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3));transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.2,.9,.3,1)}
+#contact .cf input:focus~i,#contact .cf textarea:focus~i{transform:scaleX(1)}
+.cf-count{position:absolute;right:.95rem;bottom:.5rem;font:600 .7rem 'Space Grotesk';font-style:normal;color:var(--muted)}
+.cf-count.hot{color:var(--c3)}
+
+/* ---------- Envoi ---------- */
+.ct-send{display:flex;align-items:center;flex-wrap:wrap;gap:1rem;margin-top:.3rem}
+.ct-btn{gap:.7rem}
+.ct-btn svg{position:relative;z-index:1;width:19px;height:19px;fill:currentColor;transition:transform .4s cubic-bezier(.3,1.5,.4,1)}
+.ct-btn:hover svg{transform:translate(4px,-4px) rotate(-10deg)}
+.ct-btn:disabled{cursor:progress;filter:saturate(.6);transform:none}
+#contactMsg{margin:0;min-height:1.3rem;font-size:.92rem;font-weight:600}
+
+/* ---------- Succès ---------- */
+.ct-done{position:absolute;inset:0;z-index:5;display:grid;place-content:center;justify-items:center;gap:.5rem;padding:2rem;text-align:center;background:rgba(8,10,24,.93);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;visibility:hidden;transition:opacity .5s,visibility .5s}
+.ct-card.sent .ct-done{opacity:1;visibility:visible}
+.ct-check{width:88px;height:88px;margin-bottom:.3rem}
+.ct-check circle{fill:rgba(0,229,255,.1);stroke:var(--c1);stroke-width:2;stroke-dasharray:145;stroke-dashoffset:145}
+.ct-check path{fill:none;stroke:#fff;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:40;stroke-dashoffset:40}
+.ct-card.sent .ct-check{filter:drop-shadow(0 0 20px var(--c1))}
+.ct-card.sent .ct-check circle{animation:ckDraw .8s .1s ease-out forwards}
+.ct-card.sent .ct-check path{animation:ckDraw .5s .6s ease-out forwards}
+@keyframes ckDraw{to{stroke-dashoffset:0}}
+.ct-done h4{font:700 1.6rem 'Space Grotesk'}
+.ct-done p{color:var(--muted);margin-bottom:.8rem}
+
+/* ---------- Coordonnées ---------- */
+.ct-side{display:grid;gap:.8rem}
+.ct-ch{position:relative;overflow:hidden;display:flex;align-items:center;gap:.4rem;padding:.35rem .6rem .35rem .35rem;transition:transform .35s cubic-bezier(.2,.9,.3,1),border-color .3s,box-shadow .35s}
+.ct-ch:hover{transform:translateY(-3px);border-color:var(--c1);box-shadow:0 18px 50px rgba(124,77,255,.3)}
+.ct-spot{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(0,229,255,.16),transparent 62%)}
+.ct-ch:hover .ct-spot{opacity:1}
+.ct-link{position:relative;flex:1;min-width:0;display:flex;align-items:center;gap:.95rem;padding:.7rem;color:inherit;text-decoration:none;border-radius:16px}
+.ct-link:focus-visible,.ct-copy:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
+.ct-ico{flex:none;display:grid;place-items:center;width:50px;height:50px;border-radius:16px;color:#05060f;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 0 24px rgba(0,229,255,.35);transition:transform .4s cubic-bezier(.3,1.5,.4,1)}
+.ct-ch:hover .ct-ico{transform:rotate(-8deg) scale(1.08)}
+.ct-ico svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.ct-link small{display:block;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--c1)}
+.ct-link b{display:block;font:600 1rem 'Outfit';overflow-wrap:anywhere}
+.ct-copy{position:relative;flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:13px;border:1px solid var(--line);background:var(--glass);color:var(--muted);cursor:pointer;transition:.25s}
+.ct-copy:hover{color:var(--c1);border-color:var(--c1)}
+.ct-copy svg{grid-area:1/1;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:.25s}
+.ct-copy .yes{opacity:0;transform:scale(.4)}
+.ct-copy.ok{color:#2dff8f;border-color:#2dff8f}
+.ct-copy.ok .no{opacity:0;transform:scale(.4)}
+.ct-copy.ok .yes{opacity:1;transform:none}
+.ct-copy.ok::after{content:'Copié !';position:absolute;right:calc(100% + 8px);padding:.2rem .6rem;border-radius:9px;background:rgba(8,10,24,.95);border:1px solid #2dff8f;color:#2dff8f;font:600 .74rem 'Outfit';white-space:nowrap}
+
+/* ---------- Mobile ---------- */
+@media(max-width:900px){.ct-grid{grid-template-columns:1fr}}
+@media(max-width:560px){
+  .ct-orb{width:76px;height:76px;margin-right:0}.ct-orb svg{width:30px;height:30px}
+  .ct-row{grid-template-columns:1fr}
+  .ct-btn{width:100%}
+  .ct-copy.ok::after{right:auto;left:50%;top:calc(100% + 6px);transform:translateX(-50%)}
+}

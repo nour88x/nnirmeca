@@ -1,0 +1,197 @@
+/* =====================================================================================
+   VisionGuide maj23 — Guide › 01 : fiches composants « WOW »
+   Fichier AJOUTÉ (chargé après style.css). Il ne modifie rien d'existant : il enrichit seulement
+   les pages #composant/<id>, en gardant l'univers visuel propre à chaque composant.
+   ===================================================================================== */
+
+/* ---------- Socle commun ---------- */
+#wowBar{position:fixed;left:0;top:0;width:100%;height:3px;z-index:60;pointer-events:none;transform-origin:0 50%;transform:scaleX(var(--p,0));background:linear-gradient(90deg,var(--c1),var(--c2));box-shadow:0 0 14px var(--c1);opacity:0;transition:opacity .3s}
+#wowBar.on{opacity:1}
+.wow-fx{position:absolute;inset:0 0 4.4rem;z-index:2;pointer-events:none;overflow:hidden;-webkit-mask:linear-gradient(180deg,#000 80%,transparent);mask:linear-gradient(180deg,#000 80%,transparent)}
+.wow-fx>*{position:absolute}
+.wf-glare{inset:0;background:radial-gradient(circle at var(--gx,50%) var(--gy,40%),rgba(255,255,255,.24),transparent 38%);mix-blend-mode:screen;opacity:0;transition:opacity .4s}
+.d-hero:hover .wf-glare{opacity:1}
+
+/* photo : entrée cinématique + parallaxe pointeur/scroll */
+.d-hero .d-photo img{scale:1.08;will-change:transform;transform:translate3d(calc(var(--px,0)*-18px),calc(var(--py,0)*-12px + var(--sy,0px)*.1),0);transition:transform .3s ease-out}
+.d-hero.in .d-photo img{animation:wZoom 1.8s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes wZoom{from{scale:1.5;filter:blur(16px) brightness(1.7)}}
+
+/* texte : cascade + lettres du titre */
+.wow-w,.wl{display:inline-block}
+.wow-w{white-space:nowrap}
+.d-hero.in .d-txt>*{animation:wUp .9s cubic-bezier(.2,.9,.3,1) backwards}
+.d-txt>:nth-child(1){animation-delay:.1s!important}.d-txt>:nth-child(2){animation-delay:.2s!important}.d-txt>:nth-child(3){animation-delay:.3s!important}
+.d-txt>:nth-child(4){animation-delay:.4s!important}.d-txt>:nth-child(5){animation-delay:.5s!important}.d-txt>:nth-child(6){animation-delay:.6s!important}
+@keyframes wUp{from{opacity:0;transform:translateY(26px)}}
+.d-hero.in .d-badges span{animation:wPop .7s cubic-bezier(.3,1.6,.4,1) calc(.9s + var(--i,0)*.12s) backwards}
+@keyframes wPop{from{opacity:0;scale:.4}}
+
+/* ====================================================================================
+   01 · GILET — sirène orange, faisceau de phare sur les bandes réfléchissantes, braises
+   ==================================================================================== */
+#composant[data-c="gilet"] .d-photo::before{background-size:19.8px 19.8px;animation:gTape 1s linear infinite}
+@keyframes gTape{to{background-position:39.6px 0}}
+.wf-siren{right:-90px;top:-90px;width:320px;height:320px;border-radius:50%;background:conic-gradient(rgba(255,106,0,.95),transparent 22%,transparent 50%,rgba(255,176,0,.85) 50%,transparent 72%);filter:blur(26px);mix-blend-mode:screen;animation:gSpin 2.2s linear infinite}
+@keyframes gSpin{to{rotate:360deg}}
+.wf-beam{top:-20%;bottom:-20%;left:-30%;width:18%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.6),transparent);transform:skewX(-20deg);mix-blend-mode:overlay;animation:gBeam 4.5s ease-in-out infinite}
+@keyframes gBeam{0%{left:-30%}60%,100%{left:130%}}
+.wf-ember{bottom:-10px;left:var(--x);width:var(--s);height:var(--s);background:var(--c2);transform:rotate(45deg);box-shadow:0 0 12px var(--c1);animation:gRise var(--d) linear var(--w) infinite}
+@keyframes gRise{0%{translate:0 0;opacity:0}15%{opacity:1}100%{translate:30px -380px;opacity:0}}
+#composant[data-c="gilet"] .d-hero.in .wl{animation:gSlam .6s cubic-bezier(.2,1.3,.3,1) calc(.5s + var(--k)*35ms) backwards}
+@keyframes gSlam{0%{opacity:0;translate:0 -50px;scale:1.8;rotate:-6deg}60%{opacity:1}}
+#composant[data-c="gilet"] .reveal.in :is(.d-list li,.spec dt,.spec dd){animation:gStamp .55s cubic-bezier(.2,1.2,.3,1) calc(.15s + var(--i,0)*70ms) backwards}
+@keyframes gStamp{from{opacity:0;transform:translateX(-36px) skewX(-16deg)}}
+#composant[data-c="gilet"] .d-block h3::after{background-size:7.071px 7.071px;animation:gMarch .9s linear infinite}
+#composant[data-c="gilet"] .sub::after{background-size:8.485px 8.485px;animation:gMarch2 .9s linear infinite}
+@keyframes gMarch{to{background-position:14.142px 0}}
+@keyframes gMarch2{to{background-position:16.97px 0}}
+#composant[data-c="gilet"] .gallery figure::after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:40%;pointer-events:none;background:linear-gradient(100deg,transparent,rgba(255,255,255,.6),transparent);transform:skewX(-20deg);transition:left .7s}
+#composant[data-c="gilet"] .gallery figure:hover::after{left:130%}
+#composant[data-c="gilet"] .callout{animation:gAlert 2.4s ease-in-out infinite}
+@keyframes gAlert{50%{box-shadow:0 0 34px rgba(255,106,0,.55)}}
+
+/* ====================================================================================
+   02 · RASPBERRY PI 5 — pistes du circuit parcourues par des impulsions, LED, journal de boot
+   ==================================================================================== */
+.wf-pcb{inset:0;width:100%;height:100%;fill:none;stroke:#8dffd0;stroke-width:2.2;filter:drop-shadow(0 0 5px var(--c1))}
+.wf-pcb path{stroke-dasharray:.14 .86;animation:pPulse 3.2s linear infinite;animation-delay:calc(var(--i)*-.55s)}
+@keyframes pPulse{to{stroke-dashoffset:-1}}
+.wf-led{right:46px;top:30px;width:10px;height:10px;border-radius:50%;background:#39ff88;box-shadow:0 0 14px #39ff88;animation:pBlink 1.1s steps(1) infinite}
+.wf-led.l2{right:68px;background:var(--c2);box-shadow:0 0 14px var(--c2);animation-duration:.37s}
+@keyframes pBlink{50%{opacity:.15}}
+.wf-boot{position:relative;height:1.5em;margin-top:.9rem;font:.82rem ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--c1)}
+.wf-boot span{position:absolute;left:0;top:0;white-space:nowrap;overflow:hidden;width:0;opacity:0;animation:pBoot 8s steps(30,end) infinite}
+.wf-boot span:nth-child(2){animation-delay:2s}.wf-boot span:nth-child(3){animation-delay:4s}.wf-boot span:nth-child(4){animation-delay:6s}
+@keyframes pBoot{0%{width:0;opacity:1}10%,22%{width:34ch;opacity:1}25%,100%{width:34ch;opacity:0}}
+#composant[data-c="raspberry-pi-5"] .d-hero.in .wl{animation:pType .01s steps(1) calc(.6s + var(--k)*55ms) backwards}
+@keyframes pType{from{opacity:0}}
+#composant[data-c="raspberry-pi-5"] .wow-w:last-child .wl:last-child::after{content:'▌';margin-left:.12em;color:var(--c3);animation:pCaret .8s steps(1) infinite}
+@keyframes pCaret{50%{opacity:0}}
+#composant[data-c="raspberry-pi-5"] .reveal.in :is(.d-list li,.spec dt,.spec dd){animation:pRow .5s steps(12,end) calc(.1s + var(--i,0)*90ms) backwards}
+@keyframes pRow{from{clip-path:inset(0 100% 0 0);opacity:.2}to{clip-path:inset(0 0 0 0)}}
+#composant[data-c="raspberry-pi-5"] .d-block::before{content:'';position:absolute;top:0;left:-30%;width:30%;height:2px;pointer-events:none;background:linear-gradient(90deg,transparent,var(--c1),transparent);animation:pSlide 3.4s linear infinite}
+@keyframes pSlide{to{left:130%}}
+#composant[data-c="raspberry-pi-5"] .gallery figure::before{content:'';position:absolute;left:0;right:0;top:-30%;height:30%;pointer-events:none;opacity:0;background:linear-gradient(transparent,rgba(0,217,139,.45),transparent)}
+#composant[data-c="raspberry-pi-5"] .gallery figure:hover::before{opacity:1;animation:pScanG 1.1s linear infinite}
+@keyframes pScanG{to{top:100%}}
+
+/* ====================================================================================
+   03 · CAMERA MODULE 3 — cinéma : format scope, HUD en direct, flare anamorphique, grain, mise au point
+   ==================================================================================== */
+.wf-bar{left:0;right:0;height:50%;background:#000;z-index:4}.wf-bar.t{top:0}.wf-bar.b{bottom:0}
+.d-hero.in .wf-bar{animation:cOpen 1.5s cubic-bezier(.76,0,.24,1) .15s forwards}
+@keyframes cOpen{to{height:3%}}
+.wf-grid{inset:0;opacity:0;animation:cGrid 7s ease-in-out infinite;background:
+  linear-gradient(90deg,transparent calc(33.33% - .5px),rgba(255,255,255,.3) 0 calc(33.33% + .5px),transparent 0 calc(66.66% - .5px),rgba(255,255,255,.3) 0 calc(66.66% + .5px),transparent 0),
+  linear-gradient(0deg,transparent calc(33.33% - .5px),rgba(255,255,255,.3) 0 calc(33.33% + .5px),transparent 0 calc(66.66% - .5px),rgba(255,255,255,.3) 0 calc(66.66% + .5px),transparent 0)}
+@keyframes cGrid{0%,15%{opacity:0}30%,60%{opacity:.9}75%,100%{opacity:0}}
+.wf-flare{left:-60%;top:46%;width:60%;height:3px;opacity:0;background:linear-gradient(90deg,transparent,rgba(120,170,255,.9),#fff,rgba(120,170,255,.9),transparent);box-shadow:0 0 30px 6px rgba(110,160,255,.5);mix-blend-mode:screen;animation:cFlare 6s ease-in-out infinite}
+@keyframes cFlare{0%{left:-60%;opacity:0}15%{opacity:1}55%{left:110%;opacity:1}60%,100%{left:110%;opacity:0}}
+.wf-grain{inset:-50%;opacity:.14;mix-blend-mode:overlay;animation:cGrain .5s steps(5) infinite;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+@keyframes cGrain{0%{translate:0 0}20%{translate:-3% 4%}40%{translate:5% -3%}60%{translate:-4% -5%}80%{translate:3% 3%}100%{translate:0 0}}
+.wf-hud{top:28px;right:28px;display:flex;gap:1.1rem;font:500 .74rem ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.14em;color:#fff;text-shadow:0 0 8px #000;z-index:5}
+.wf-hud span{padding:.2rem .5rem;background:rgba(0,0,0,.5);border-radius:2px}
+.wf-hud .tc{color:var(--c3)}
+.wf-hist{left:28px;bottom:58px;display:flex;align-items:flex-end;gap:2px;width:70px;height:34px;z-index:5}
+.wf-hist b{flex:1;height:var(--h);background:rgba(255,255,255,.7);animation:cHist 1.1s ease-in-out infinite alternate;animation-delay:calc(var(--i)*-.17s)}
+@keyframes cHist{to{height:calc(var(--h)*.4)}}
+#composant[data-c="camera-module-3"] .d-hero.in .d-photo img{animation:wZoom 1.8s cubic-bezier(.2,.8,.2,1) backwards,cBreath 8s ease-in-out 2.5s infinite}
+@keyframes cBreath{0%,70%,100%{filter:contrast(1.06) saturate(1.08) blur(0)}78%{filter:contrast(1.06) saturate(1.08) blur(2.2px)}88%{filter:contrast(1.06) saturate(1.08) blur(0)}}
+#composant[data-c="camera-module-3"] .d-hero.in .wl{animation:cFocus 1.1s cubic-bezier(.2,.8,.2,1) calc(.5s + var(--k)*60ms) backwards}
+@keyframes cFocus{from{opacity:0;filter:blur(16px);scale:1.5}}
+#composant[data-c="camera-module-3"] .reveal.in :is(.d-list li,.spec dt,.spec dd){animation:cRow .8s ease-out calc(.1s + var(--i,0)*80ms) backwards}
+@keyframes cRow{from{opacity:0;filter:blur(10px);translate:0 8px}}
+#composant[data-c="camera-module-3"] .gallery figure:hover img{filter:brightness(1.15) contrast(1.08)}
+
+/* ====================================================================================
+   04 · POWER BANK — jauge qui se charge, arcs électriques, étincelles, badges qui se remplissent
+   ==================================================================================== */
+@property --f{syntax:'<percentage>';inherits:false;initial-value:70%}
+@property --p{syntax:'<integer>';inherits:false;initial-value:0}
+.wf-arc{inset:0;width:100%;height:100%;fill:none;stroke:#fff;stroke-width:2.5;stroke-linejoin:bevel;filter:drop-shadow(0 0 6px var(--c1)) drop-shadow(0 0 14px var(--c2))}
+.wf-arc polyline{opacity:0;animation:bArc 2.6s steps(1) infinite}
+.wf-arc polyline:nth-child(2){animation-delay:-.9s}.wf-arc polyline:nth-child(3){animation-delay:-1.7s}
+@keyframes bArc{0%,52%,58%,100%{opacity:0}53%{opacity:1}55%{opacity:.2}56%{opacity:1}}
+.wf-gauge{left:28px;top:26px;width:92px;height:92px;display:grid;place-items:center}
+.wf-gauge svg{position:absolute;inset:0;width:100%;height:100%;rotate:-90deg;fill:none;stroke-width:7}
+.wf-gauge .g0{stroke:rgba(56,163,255,.25)}
+.wf-gauge .g1{stroke:var(--c2);stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:100;filter:drop-shadow(0 0 5px var(--c2));animation:bGauge 5s ease-in-out infinite}
+@keyframes bGauge{0%{stroke-dashoffset:100}70%,100%{stroke-dashoffset:0}}
+.wf-gauge b{position:relative;font:800 1.15rem 'Space Grotesk',sans-serif;color:#fff;text-shadow:0 0 12px var(--c1);counter-reset:p var(--p);animation:bNum 5s ease-in-out infinite}
+.wf-gauge b::after{content:counter(p) '%'}
+@keyframes bNum{0%{--p:0}70%,100%{--p:100}}
+.wf-spark{bottom:-8px;left:var(--x);width:5px;height:5px;border-radius:50%;background:var(--c2);box-shadow:0 0 10px 2px var(--c2);animation:bSpark var(--d) ease-out var(--w) infinite}
+@keyframes bSpark{0%{translate:0 0;opacity:0;scale:1}10%{opacity:1}100%{translate:20px -340px;opacity:0;scale:.2}}
+#composant[data-c="power-bank"] .d-hero.in .wl{animation:bNeon .9s linear calc(.5s + var(--k)*60ms) backwards}
+@keyframes bNeon{0%{opacity:0}30%{opacity:1}38%{opacity:.15}46%{opacity:1}54%{opacity:.4}62%,100%{opacity:1}}
+#composant[data-c="power-bank"] .d-hero.in .d-badges span{animation:wPop .7s cubic-bezier(.3,1.6,.4,1) calc(.9s + var(--i,0)*.12s) backwards,bFill 1.8s ease-out calc(1.1s + var(--i,0)*.15s) backwards}
+@keyframes bFill{from{--f:0%}}
+#composant[data-c="power-bank"] .reveal.in :is(.d-list li,.spec dt,.spec dd){animation:bRow .6s cubic-bezier(.2,.9,.3,1) calc(.1s + var(--i,0)*80ms) backwards}
+@keyframes bRow{from{opacity:0;translate:-30px 0;clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+#composant[data-c="power-bank"] .d-block::before{animation:bBlink 2.4s ease-in-out infinite}
+@keyframes bBlink{50%{filter:brightness(1.7) drop-shadow(0 0 6px var(--c2))}}
+
+/* ====================================================================================
+   05 · CASQUE BLUETOOTH — ondes sonores, égaliseur, notes qui s'envolent, image qui bat au rythme
+   ==================================================================================== */
+.wf-ring{left:50%;top:44%;width:240px;height:240px;margin:-120px 0 0 -120px;border-radius:50%;border:2px solid var(--c1);opacity:0;animation:hRing 3.6s ease-out infinite}
+.wf-ring.r2{border-color:var(--c2);animation-delay:1.2s}.wf-ring.r3{animation-delay:2.4s}
+@keyframes hRing{0%{scale:.3;opacity:.9}100%{scale:2.6;opacity:0}}
+.wf-wave{left:0;bottom:6%;width:200%;height:30%;fill:none;stroke:var(--c1);stroke-width:3;filter:drop-shadow(0 0 8px var(--c1));animation:hWave 7s linear infinite}
+.wf-wave.b{stroke:var(--c2);stroke-width:2;opacity:.7;animation-duration:11s;animation-direction:reverse}
+@keyframes hWave{to{translate:-50% 0}}
+.wf-eq{left:0;right:0;bottom:0;height:36%;display:flex;align-items:flex-end;gap:3px;padding:0 3%}
+.wf-eq i{flex:1;height:var(--h);border-radius:3px 3px 0 0;background:linear-gradient(0deg,var(--c2),var(--c1));opacity:.7;transform-origin:bottom;animation:hEq .9s ease-in-out infinite alternate;animation-delay:calc(var(--i)*-.11s)}
+@keyframes hEq{from{scale:1 .2}to{scale:1 1}}
+.wf-note{bottom:12%;left:var(--x);font-size:1.7rem;color:var(--c1);text-shadow:0 0 14px var(--c1);opacity:0;animation:hNote 6s ease-in infinite var(--w)}
+@keyframes hNote{0%{translate:0 0;opacity:0}15%{opacity:1}50%{translate:26px -140px}100%{translate:-20px -300px;opacity:0;rotate:25deg}}
+#composant[data-c="casque-bluetooth"] .d-hero.in .d-photo img{animation:wZoom 1.8s cubic-bezier(.2,.8,.2,1) backwards,hBeat .52s ease-in-out 2s infinite alternate}
+@keyframes hBeat{to{scale:1.11}}
+#composant[data-c="casque-bluetooth"] .d-hero.in .wl{animation:hDrop .8s cubic-bezier(.3,1.6,.4,1) calc(.5s + var(--k)*45ms) backwards,hBob 1.8s ease-in-out calc(1.8s + var(--k)*80ms) infinite}
+@keyframes hDrop{from{opacity:0;translate:0 40px;scale:.3}}
+@keyframes hBob{50%{translate:0 -.09em}}
+#composant[data-c="casque-bluetooth"] .reveal.in :is(.d-list li,.spec dt,.spec dd){transform-origin:left center;animation:hPop .7s cubic-bezier(.3,1.6,.4,1) calc(.1s + var(--i,0)*80ms) backwards}
+@keyframes hPop{from{opacity:0;scale:.5}}
+#composant[data-c="casque-bluetooth"] .d-block h3::before{animation:hEq .6s ease-in-out infinite alternate}
+#composant[data-c="casque-bluetooth"] .gallery figure:hover{animation:hWob .5s ease-in-out}
+@keyframes hWob{25%{rotate:-1.5deg}75%{rotate:1.5deg}}
+
+/* ====================================================================================
+   06 · COMMANDE & CONNEXION — fils qui se tracent, signaux, LED en chenillard, touches qui tombent
+   ==================================================================================== */
+.wf-wires{inset:0;width:100%;height:100%;fill:none;stroke-linecap:round;filter:drop-shadow(0 3px 3px rgba(0,0,0,.5))}
+.wf-wires .w{stroke-width:3;opacity:.78;stroke-dasharray:1;stroke-dashoffset:1}
+.wf-wires .w1{stroke:var(--c1)}.wf-wires .w2{stroke:var(--c2)}.wf-wires .w3{stroke:var(--c3)}
+.d-hero.in .wf-wires .w{animation:kDraw 2.2s cubic-bezier(.6,0,.2,1) forwards}
+.d-hero.in .wf-wires .w2{animation-delay:.4s}.d-hero.in .wf-wires .w3{animation-delay:.8s}
+@keyframes kDraw{to{stroke-dashoffset:0}}
+.wf-wires .sig{stroke:#fff;stroke-width:2.5;stroke-dasharray:.035 .965;opacity:.9;filter:drop-shadow(0 0 5px #fff)}
+.d-hero.in .wf-wires .sig{animation:kSig 2.4s linear 3s infinite backwards}
+.d-hero.in .wf-wires .s2{animation-delay:3.4s}.d-hero.in .wf-wires .s3{animation-delay:3.8s}
+@keyframes kSig{from{stroke-dashoffset:0}to{stroke-dashoffset:-1}}
+.wf-leds{left:8%;right:8%;top:18px;display:flex;justify-content:space-between}
+.wf-leds b{--lc:var(--c1);width:9px;height:9px;border-radius:50%;background:#2b2b33;animation:kLed 2.8s linear infinite;animation-delay:calc(var(--i)*.2s - 2.8s)}
+.wf-leds b:nth-child(3n+2){--lc:var(--c2)}.wf-leds b:nth-child(3n){--lc:var(--c3)}
+@keyframes kLed{0%,10%{background:var(--lc);box-shadow:0 0 12px 3px var(--lc)}20%,100%{background:#2b2b33;box-shadow:none}}
+#composant[data-c="commande-connexion"] .d-hero.in .wl{animation:kKey .8s cubic-bezier(.3,1.2,.4,1) calc(.5s + var(--k)*50ms) backwards}
+#composant[data-c="commande-connexion"] .wl:nth-child(odd){--rr:-12deg}#composant[data-c="commande-connexion"] .wl:nth-child(even){--rr:10deg}
+@keyframes kKey{0%{opacity:0;translate:0 -60px;rotate:var(--rr,-12deg)}55%{opacity:1;translate:0 6px}75%{translate:0 -4px}100%{translate:0 0}}
+#composant[data-c="commande-connexion"] .reveal.in :is(.d-list li,.spec dt,.spec dd){animation:kRow .6s ease-out calc(.1s + var(--i,0)*80ms) backwards}
+@keyframes kRow{from{opacity:0;transform:translateY(-14px)}60%{transform:translateY(3px)}}
+#composant[data-c="commande-connexion"] .reveal.in .part{animation:kFlip .9s cubic-bezier(.2,.9,.3,1.2) calc(var(--i,0)*.15s) backwards}
+@keyframes kFlip{from{opacity:0;transform:perspective(900px) rotateX(75deg) translateY(40px)}}
+#composant[data-c="commande-connexion"] .reveal.in .gallery figure{animation:kDrop .9s cubic-bezier(.3,1.4,.4,1) calc(var(--i,0)*.14s) backwards}
+@keyframes kDrop{from{opacity:0;transform:translateY(-120px) rotate(-18deg)}}
+#composant[data-c="commande-connexion"] .d-badges span{cursor:pointer}
+#composant[data-c="commande-connexion"] .d-badges span:active{transform:translateY(5px);box-shadow:0 0 0 var(--kd,#9d1f1f),inset 0 1px 0 rgba(255,255,255,.45)}
+
+/* ---------- Mobile & accessibilité ---------- */
+@media(max-width:720px){
+  .wf-hud span:not(.tc),.wf-hist{display:none}
+  .wf-hud{top:20px;right:18px}
+  .wf-gauge{width:62px;height:62px;left:16px;top:16px}.wf-gauge b{font-size:.8rem}
+  .wf-eq i:nth-child(2n){display:none}
+  .wf-ring{width:150px;height:150px;margin:-75px 0 0 -75px}
+}
+@media(prefers-reduced-motion:reduce){.wow-fx,#wowBar{display:none}}

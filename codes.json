@@ -1,0 +1,14 @@
+[
+  {
+    "code": "VG-2026-AHMED",
+    "ip": "192.168.1.50",
+    "blindName": "Ahmed",
+    "deviceKey": "cle-secrete-raspberry-ahmed-9f3k2"
+  },
+  {
+    "code": "VG-2026-FATIMA",
+    "ip": "",
+    "blindName": "Fatima",
+    "deviceKey": "cle-secrete-raspberry-fatima-7d1x8"
+  }
+]

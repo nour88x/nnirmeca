@@ -1,0 +1,45 @@
+/* VisionGuide maj24 — Guide › 02 : section « Dictionnaire des champs et Champ détecté ».
+   Fichier AJOUTÉ. Réutilise l'habillage existant (.dl, .dg, .dc, .use-note) ; ne définit que ce qui est propre à cette section. */
+#champs .ch-sep{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1rem;margin:2.4rem 0 .2rem;padding-top:1.4rem;border-top:1px dashed var(--line)}
+#champs .ch-sep span{font:700 1.35rem 'Space Grotesk',sans-serif}
+#champs .ch-sep small{color:var(--muted);font-size:.86rem}
+
+/* pastille numérotée des cartes */
+#champs .ch-n{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;font:700 1rem 'Space Grotesk',sans-serif;color:#05060f;background:var(--c);box-shadow:0 0 22px color-mix(in srgb,var(--c) 55%,transparent)}
+
+/* simulation */
+#champs .ch-demo{margin:0 0 .4rem;padding:1.1rem 1.2rem 1rem;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.035)}
+#champs .ch-demo-cap{display:flex;align-items:center;gap:.5rem;margin-bottom:.8rem;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+#champs .ch-demo-cap i{width:8px;height:8px;border-radius:50%;background:var(--c1);box-shadow:0 0 10px var(--c1);animation:chPulse 1.4s ease-in-out infinite}
+#champs .ch-chat{display:grid;gap:.55rem;min-height:11.2rem;align-content:start}
+#champs .ch-b{position:relative;max-width:min(100%,34rem);padding:.6rem .9rem;border-radius:16px;border:1px solid var(--line);opacity:0;transform:translateY(10px);transition:opacity .45s,transform .45s}
+#champs .ch-b small{display:block;margin-bottom:.1rem;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+#champs .ch-b.on{opacity:1;transform:none}
+#champs .ch-you{justify-self:end;background:rgba(124,77,255,.16);border-color:rgba(124,77,255,.45)}
+#champs .ch-det{background:rgba(0,229,255,.1);border-color:rgba(0,229,255,.45)}
+#champs .ch-ana{background:rgba(255,255,255,.04)}
+#champs .ch-txt mark{background:none;color:#05060f;padding:.02rem .35rem;border-radius:6px;background:var(--c1);box-shadow:0 0 14px rgba(0,229,255,.55)}
+#champs .ch-tag{display:inline-block;margin-left:.5rem;padding:.05rem .55rem;border-radius:999px;font:500 .72rem ui-monospace,Menlo,Consolas,monospace;font-style:normal;color:#9ff3ff;border:1px solid rgba(0,229,255,.45)}
+#champs .ch-tag:empty{display:none}
+#champs .ch-dots{display:flex;gap:.4rem;justify-content:center;margin-top:.8rem;list-style:none;padding:0}
+#champs .ch-dots li{width:22px;height:4px;border-radius:4px;background:rgba(255,255,255,.16);transition:background .3s,width .3s}
+#champs .ch-dots li.on{width:38px;background:linear-gradient(90deg,var(--c1),var(--c2))}
+
+/* dictionnaire */
+#champs .ch-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem}
+#champs .ch-f{position:relative;display:flex;flex-direction:column;gap:.45rem;padding:.9rem 1rem;border-radius:16px;border:1px solid var(--line);background:radial-gradient(240px circle at var(--mx,50%) var(--my,0%),color-mix(in srgb,var(--c) 20%,transparent),transparent 65%),rgba(255,255,255,.035);transition:transform .3s,border-color .3s,box-shadow .3s;overflow:hidden}
+#champs .ch-f:hover{transform:translateY(-3px);border-color:var(--c);box-shadow:0 10px 34px rgba(0,0,0,.4),0 0 26px color-mix(in srgb,var(--c) 32%,transparent)}
+#champs .ch-f-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem}
+#champs .ch-f h5{font:700 .98rem/1.25 'Space Grotesk',sans-serif}
+#champs .ch-pru{flex:none;padding:.05rem .5rem;border-radius:999px;font:600 .66rem 'Outfit',sans-serif;color:#ffd166;border:1px solid rgba(255,209,102,.5);background:rgba(255,209,102,.08);white-space:nowrap}
+#champs .ch-ex{display:flex;flex-wrap:wrap;gap:.3rem;list-style:none;padding:0;margin:0}
+#champs .ch-ex li{padding:.08rem .55rem;border-radius:999px;font-size:.78rem;color:var(--fg);background:color-mix(in srgb,var(--c) 16%,transparent);border:1px solid color-mix(in srgb,var(--c) 40%,transparent)}
+#champs .ch-lg{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem .45rem;font-size:.78rem;color:var(--muted)}
+#champs .ch-lg span{padding:0 .35rem;border-radius:5px;font:600 .62rem 'Outfit',sans-serif;color:#05060f;background:var(--muted)}
+#champs .ch-lg bdi{color:var(--fg)}
+#champs .ch-key{align-self:flex-start;margin-top:auto;padding:.1rem .5rem;border-radius:8px;background:#04050e;border:1px solid rgba(255,255,255,.08);border-left:3px solid var(--c);font:500 .7rem ui-monospace,Menlo,Consolas,monospace;color:#9ff3ff}
+
+@keyframes chPulse{50%{opacity:.35;transform:scale(.7)}}
+@media (max-width:980px){#champs .ch-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){#champs .ch-grid{grid-template-columns:1fr}#champs .ch-chat{min-height:13.5rem}}
+@media (prefers-reduced-motion:reduce){#champs .ch-b{opacity:1;transform:none;transition:none}#champs .ch-demo-cap i{animation:none}}

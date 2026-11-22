@@ -1,0 +1,108 @@
+/* =====================================================================================
+   VisionGuide maj24 — Guide › 02 : « Langue du retour vocal »
+   Fichier AJOUTÉ. Les animations en boucle ne tournent que lorsque le panneau est à l'écran (.run).
+   Cycle de la démo : 9 s = français (0-3 s) → appui → anglais (3-6 s) → appui → arabe (6-9 s).
+   ===================================================================================== */
+@property --lc{syntax:'<color>';inherits:true;initial-value:#00e5ff}
+@property --la{syntax:'<angle>';inherits:false;initial-value:0deg}
+
+/* ---------- Puce d'accès rapide (en haut de la page) ---------- */
+.lg-chip{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:.7rem;margin-top:1.1rem;padding:.5rem 1.1rem .5rem .5rem;border-radius:999px;border:1px solid rgba(0,229,255,.45);background:rgba(0,229,255,.08);color:var(--fg);font:600 .92rem 'Outfit',sans-serif;cursor:pointer;transition:transform .25s,box-shadow .25s,border-color .25s}
+.lg-chip:hover,.lg-chip:focus-visible{transform:translateY(-3px);box-shadow:0 0 32px rgba(0,229,255,.35);border-color:var(--c1);outline:none}
+.lg-chip b{display:grid;place-items:center;min-width:2.1rem;height:2.1rem;border-radius:50%;background:linear-gradient(135deg,var(--c1),var(--c2));color:#05060f;font:800 .78rem 'Space Grotesk',sans-serif;animation:lgBeat 2.4s ease-out infinite}
+.lg-chip em{font-style:normal;color:var(--c1);animation:lgNudge 1.5s ease-in-out infinite}
+.lg-chip::after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);animation:lgSheen 4s ease-in-out infinite}
+@keyframes lgBeat{0%{box-shadow:0 0 0 0 rgba(0,229,255,.65)}70%,100%{box-shadow:0 0 0 12px rgba(0,229,255,0)}}
+@keyframes lgNudge{50%{translate:0 4px}}
+@keyframes lgSheen{0%{left:-60%}50%,100%{left:140%}}
+
+/* ---------- Panneau ---------- */
+.lg{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;align-items:center;margin:3rem 0 0;padding:clamp(1.4rem,3.4vw,2.6rem);border-radius:28px;scroll-margin-top:110px;--lc:#00e5ff}
+.lg.run{animation:lgHue 9s linear infinite}
+.lg.run.flash{animation:lgHue 9s linear infinite,lgFlash 1.4s ease-out}
+@keyframes lgHue{0%,30%{--lc:#00e5ff}36%,63%{--lc:#7c4dff}69%,97%{--lc:#ff3d9a}100%{--lc:#00e5ff}}
+@keyframes lgFlash{0%{box-shadow:0 0 0 0 var(--lc),0 10px 40px rgba(0,0,0,.35)}40%{box-shadow:0 0 0 8px rgba(0,229,255,.35),0 0 80px var(--lc)}100%{box-shadow:0 10px 40px rgba(0,0,0,.35)}}
+
+/* bordure lumineuse qui tourne */
+.lg::before{content:'';position:absolute;inset:0;z-index:3;padding:1.5px;border-radius:inherit;pointer-events:none;background:conic-gradient(from var(--la),transparent 0 62%,var(--c1),var(--c2),var(--c3),transparent);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.lg.run::before{animation:lgRot 5s linear infinite}
+@keyframes lgRot{to{--la:360deg}}
+
+/* fond : aurores qui prennent la couleur de la langue + mots qui flottent + halo du pointeur */
+.lg-aurora{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.lg-aurora i{position:absolute;width:60%;aspect-ratio:1;border-radius:50%;background:var(--lc);filter:blur(80px);opacity:.22}
+.lg-aurora i:nth-child(1){left:-18%;top:-35%}.lg-aurora i:nth-child(2){right:-22%;bottom:-45%}
+.lg.run .lg-aurora i{animation:lgDrift 12s ease-in-out infinite alternate}
+.lg.run .lg-aurora i:nth-child(2){animation-delay:-6s}
+@keyframes lgDrift{to{translate:8% 10%;scale:1.2}}
+.lg-aurora::after{content:'';position:absolute;inset:0;background:radial-gradient(420px circle at var(--mx,75%) var(--my,25%),rgba(255,255,255,.07),transparent 60%)}
+.lg-float{position:absolute;left:var(--x);bottom:-2rem;font:700 1.15rem 'Space Grotesk',sans-serif;color:var(--lc);opacity:0;text-shadow:0 0 16px var(--lc)}
+.lg.run .lg-float{animation:lgFloat 11s ease-in infinite var(--w)}
+@keyframes lgFloat{0%{translate:0 0;opacity:0}15%{opacity:.2}60%{opacity:.12}100%{translate:18px -360px;opacity:0}}
+
+/* ---------- Texte ---------- */
+.lg-txt h3{font:700 clamp(1.5rem,3.2vw,2.1rem)/1.15 'Space Grotesk',sans-serif;margin:.3rem 0 1rem}
+.lg-txt p{color:#c4cce6}
+.lg-txt p+p{margin-top:.7rem}
+.lg-txt b{color:var(--fg)}
+.lg-tag{display:inline-block;margin-right:.6rem;padding:.12rem .65rem;border-radius:999px;background:rgba(0,229,255,.14);border:1px solid var(--c1);color:#9ff3ff;font:700 .7rem 'Space Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase}
+.lg-def{font-size:1.1rem}
+.lg-seq{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1.7rem;list-style:none;margin:1.1rem 0 1.2rem}
+.lg-seq li{position:relative;display:inline-flex;align-items:center;gap:.5rem;padding:.4rem .95rem .4rem .45rem;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.07);color:var(--muted);font-weight:600}
+.lg-seq li b{display:grid;place-items:center;min-width:1.9rem;height:1.9rem;border-radius:50%;background:var(--k);color:var(--kt,#05060f);font:800 .68rem 'Space Grotesk',sans-serif}
+.lg-seq li+li::before{content:'→';position:absolute;left:-1.35rem;top:50%;translate:0 -50%;color:var(--muted)}
+.lg-seq li:first-child{background:var(--k);color:#05060f;box-shadow:0 0 24px var(--k)}
+.lg-seq li:first-child b{background:rgba(5,6,15,.82);color:var(--k)}
+.lg.run .lg-seq li{animation:lgOn 9s infinite}
+.lg.run .lg-seq li:nth-child(2){animation-delay:3s}.lg.run .lg-seq li:nth-child(3){animation-delay:6s}
+@keyframes lgOn{0%,32%{background:var(--k);color:var(--kt,#05060f);scale:1.08;box-shadow:0 0 28px var(--k)}36%,100%{background:rgba(255,255,255,.07);color:var(--muted);scale:1;box-shadow:0 0 0 transparent}}
+
+/* entrée en cascade */
+.lg.in .lg-txt>*{animation:lgUp .8s cubic-bezier(.2,.9,.3,1) backwards}
+.lg.in .lg-txt>:nth-child(1){animation-delay:.1s}.lg.in .lg-txt>:nth-child(2){animation-delay:.2s}.lg.in .lg-txt>:nth-child(3){animation-delay:.3s}
+.lg.in .lg-txt>:nth-child(4){animation-delay:.4s}.lg.in .lg-txt>:nth-child(5){animation-delay:.5s}.lg.in .lg-txt>:nth-child(6){animation-delay:.6s}
+@keyframes lgUp{from{opacity:0;transform:translateY(24px)}}
+.lg.in .lg-vis{animation:lgVis 1s cubic-bezier(.2,1.2,.3,1) .3s backwards}
+@keyframes lgVis{from{opacity:0;scale:.85;rotate:3deg}}
+
+/* ---------- Simulation ---------- */
+.lg-vis{position:relative;display:grid;gap:1.1rem;justify-items:center;padding:1.3rem 1.2rem 1rem;border-radius:22px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.015));box-shadow:inset 0 0 50px rgba(0,0,0,.35),0 0 50px -10px var(--lc)}
+.lg-says{position:relative;width:100%;height:3.2rem}
+.lg-say{position:absolute;inset:0 0 auto;margin:auto;width:max-content;max-width:100%;display:flex;align-items:center;gap:.6rem;padding:.45rem 1.1rem .45rem .45rem;border-radius:999px;background:rgba(5,6,15,.8);border:1px solid var(--lc);box-shadow:0 0 26px var(--lc);color:#fff;font-weight:600;opacity:0;white-space:nowrap}
+.lg-say:first-child{opacity:1}
+.lg-say small{display:grid;place-items:center;width:1.9rem;height:1.9rem;border-radius:50%;background:var(--lc);color:#05060f;font:800 .66rem 'Space Grotesk',sans-serif}
+.lg.run .lg-say{animation:lgSay 9s infinite}
+.lg.run .lg-say:nth-child(2){animation-delay:3s}.lg.run .lg-say:nth-child(3){animation-delay:6s}
+@keyframes lgSay{0%{opacity:0;translate:0 14px;scale:.8}4%{opacity:1;translate:0 0;scale:1}30%{opacity:1;translate:0 0;scale:1}34%,100%{opacity:0;translate:0 -12px;scale:.95}}
+
+.lg-eq{display:flex;align-items:center;gap:3px;width:100%;height:54px}
+.lg-eq i{flex:1;height:var(--h);border-radius:3px;background:var(--lc);opacity:.85;box-shadow:0 0 10px var(--lc)}
+.lg.run .lg-eq i{animation:lgEq .8s ease-in-out infinite alternate;animation-delay:calc(var(--i)*-.09s)}
+@keyframes lgEq{from{scale:1 .18}to{scale:1 1}}
+
+.lg-dev{display:grid;gap:1rem;width:100%;padding:1.1rem 1.2rem;border-radius:20px;background:#0b0e1d;border:1px solid rgba(255,255,255,.14)}
+.lg-row{display:flex;align-items:center;gap:1rem}
+.lg-row.dim{opacity:.72}
+.lg-btn{position:relative;flex:none;width:72px;height:72px;border-radius:50%;display:grid;place-items:center}
+.lg-btn.top{border:2px solid rgba(255,255,255,.6);background:radial-gradient(circle at 35% 30%,#fff 0,var(--lc) 38%,#04121a 130%);box-shadow:0 0 34px var(--lc),inset 0 -6px 14px rgba(0,0,0,.35)}
+.lg-btn.bot{border:2px solid rgba(255,255,255,.14);background:radial-gradient(circle at 35% 30%,#4a4f66,#1b1e2e 70%)}
+.lg-btn svg{width:34px;height:34px;fill:none;stroke:#05060f;stroke-width:1.8;stroke-linecap:round}
+.lg.run .lg-mer{transform-box:fill-box;transform-origin:center;animation:lgMer 3s ease-in-out infinite}
+@keyframes lgMer{50%{transform:scaleX(.15)}}
+.lg.run .lg-btn.top{animation:lgPress 9s ease-in-out infinite}
+@keyframes lgPress{0%,32%{scale:1}33.5%{scale:.86}36%{scale:1.04}38%,65%{scale:1}66.5%{scale:.86}69%{scale:1.04}71%,100%{scale:1}}
+.lg-ping{position:absolute;inset:-2px;border-radius:50%;border:2px solid var(--lc);opacity:0}
+.lg.run .lg-ping{animation:lgPing 9s ease-out infinite}
+.lg.run .lg-ping+.lg-ping{animation-name:lgPing;animation-delay:.25s}
+@keyframes lgPing{0%,33%{opacity:0;scale:1}33.5%{opacity:.9;scale:1}42%{opacity:0;scale:2.2}65.9%{opacity:0;scale:1}66.5%{opacity:.9;scale:1}75%,100%{opacity:0;scale:2.2}}
+.lg-plus{position:absolute;top:-8px;right:-14px;padding:.1rem .5rem;border-radius:999px;background:var(--lc);color:#05060f;font:800 .72rem 'Space Grotesk',sans-serif;font-style:normal;letter-spacing:.06em;text-transform:uppercase;opacity:0}
+.lg.run .lg-plus{animation:lgPlus 9s ease-out infinite}
+@keyframes lgPlus{0%,33%{opacity:0;translate:0 6px}34%{opacity:1;translate:0 0}40%{opacity:1;translate:0 -10px}42%,65.9%{opacity:0;translate:0 6px}67%{opacity:1;translate:0 0}73%{opacity:1;translate:0 -10px}75%,100%{opacity:0}}
+.lg-lab b{display:block;font:700 .98rem 'Space Grotesk',sans-serif;color:var(--fg)}
+.lg-lab span{font-size:.82rem;color:var(--muted)}
+.lg-row:not(.dim) .lg-lab b{color:var(--lc)}
+.lg-cap{font:700 .68rem 'Space Grotesk',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+@media(max-width:860px){.lg{grid-template-columns:1fr}.lg-seq{gap:.6rem 1.6rem}}
+@media(max-width:480px){.lg-seq{gap:.6rem}.lg-seq li+li::before{display:none}}
+@media(max-width:420px){.lg-chip{font-size:.82rem}.lg-btn{width:60px;height:60px}}
